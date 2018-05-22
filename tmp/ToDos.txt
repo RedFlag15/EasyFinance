@@ -1,0 +1,5 @@
+Recuperar contraseña de usuario. 
+Personalizacion de perfil, posibilidad de establecer imagen de perfil . 
+Funciones de Cryptomonedas. 
+Analitica de datos de block, graficas.
+Sincronizar bancos

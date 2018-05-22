@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ./../../partials/dashboard/head %>
+</head>
+<body class="fix-header fix-sidebar">
+    <!-- Preloader - style you can find in spinners.css -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+    </div>
+
+    <!-- Main wrapper  -->
+    <div id="main-wrapper">
+        <!-- header header  -->
+        <div class="header">
+            <% include ./../../partials/dashboard/dash_header %>
+        </div>
+        <!-- End header header -->
+
+        <!-- Left Sidebar  -->
+        <% include ./../../partials/dashboard/leftsidebar %>
+        <!-- End Left Sidebar  -->
+        <!-- Page wrapper  -->
+        <div class="page-wrapper">
+            <!-- Bread crumb -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-primary">Credit Accounts</h3> </div>
+            </div>
+            <!-- End Bread crumb -->
+            <!-- Container fluid  -->
+            <div class="container-fluid">
+                
+                
+                
+                <!-- Start Page Content -->
+                <div class="card-body">
+                        <div class="horizontal-form-elements">
+                            <form class="form-horizontal">
+                                <div class="row">
+
+                                       <div class="col-lg-9">
+                                            <div class="card">
+                                                <div class="card-title">
+                                                    <h4>Recent Orders </h4>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Number</th>
+                                                                    <th>Bank</th>
+                                                                    <th>Type</th>
+                                                                    <th>Good Thru</th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                                <tr>
+                                                                    <td>BD</td>
+                                                                    <td><span>BD</span></td>
+                                                                    <td><span>BD</span></td>
+                                                                    <td><span>BD</span></td>
+                                                                    <td><a class="btn btn-info">Edit</a></td>
+                                                                    <td><a class="btn btn-info">Delete</a></td>
+                                                                </tr>
+                                                                
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                </div> 
+                        </form>    
+                    </div>
+                </div>
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <footer class="footer"> © 2018 EasyFinance. All rights reserved.</footer>
+            <!-- End footer -->
+        </div>
+        <!-- End Page wrapper  -->
+    </div>
+    <!-- End Wrapper -->
+    <% include ./../../partials/dashboard/libjs %>
+
+</body>
+
+</html>

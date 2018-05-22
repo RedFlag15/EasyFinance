@@ -1,0 +1,25 @@
+{
+  "name": "node-authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon ./server"
+  },
+  "dependencies": {
+    "async": "^2.6.1",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.13.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.3.5",
+    "crypto": "^1.0.1",
+    "ejs": "^2.3.2",
+    "express": "^4.13.0",
+    "express-session": "^1.11.3",
+    "morgan": "^1.6.0",
+    "mysql": "^2.7.0",
+    "nodemailer": "^4.6.4",
+    "nodemon": "^1.17.3",
+    "passport": "^0.2.2",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7"
+  }
+}

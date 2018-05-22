@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon.png">
+    <title>EasyFinance</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="/css/lib/calendar2/semantic.ui.min.css" rel="stylesheet">
+    <link href="/css/lib/calendar2/pignose.calendar.min.css" rel="stylesheet">
+    <link href="/css/lib/owl.carousel.min.css" rel="stylesheet" />
+    <link href="/css/lib/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="/css/helper.css" rel="stylesheet">
+    <link href="/css/style2.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:** -->
+    <!--[if lt IE 9]>
+    <script src="https:**oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https:**oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+
+<body class="fix-header fix-sidebar">
+    <!-- Preloader - style you can find in spinners.css -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+    </div>
+    <!-- Main wrapper  -->
+    <div id="main-wrapper">
+        <!-- header header  -->
+        <div class="header">
+            <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                <!-- Logo -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/users/dashboard">
+                        <!-- Logo icon -->
+                        <b><img src="/img/eflogo2.png" alt="homepage" class="dark-logo" /></b> 
+                        <!--End Logo icon -->
+                        <!-- Logo text -->
+                        <span><img src="/img/logo2.png" alt="homepage" class="dark-logo" /></span>
+                    </a>
+                </div>
+                <!-- End Logo -->
+                <div class="navbar-collapse">
+                    <!-- toggle and nav items -->
+                    <ul class="navbar-nav mr-auto mt-md-0">
+                        <!-- This is  -->
+                        <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted  " href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                        <li class="nav-item m-l-10"> <a class="nav-link sidebartoggler hidden-sm-down text-muted  " href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                        <!-- Messages -->
+                        <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-th-large"></i></a>
+                            <div class="dropdown-menu animated zoomIn">
+                                <ul class="mega-dropdown-menu row">
+
+
+                                    <!-- This is min menu on nav bar -->
+                                    <li class="col-lg-3 col-xlg-3 m-b-30">
+                                        <h4 class="m-b-20">Coming Soon.</h4>
+                                        <!-- List style -->
+                                        <ul class="list-style-none">
+                                            <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Coming soon. </a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Messages -->
+                    </ul>
+                    <!-- User profile and search -->
+                    <ul class="navbar-nav my-lg-0">
+
+                        <!-- Comment -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="fa fa-bell"></i>
+								<div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+							</a>
+                            <div class="dropdown-menu dropdown-menu-right mailbox animated zoomIn">
+                                <ul>
+                                    <li>
+                                        <div class="drop-title">Notifications</div>
+                                    </li>
+                                    <li>
+                                        <div class="message-center">
+                                            <!-- Message -->
+                                            <a href="#">
+                                                <div class="btn btn-danger btn-circle m-r-10"><i class="fa fa-link"></i></div>
+                                                <div class="mail-contnet">
+                                                    <h5>Notification 1</h5> <span class="mail-desc">New income!</span> <span class="time">9:30 AM</span>
+                                                </div>
+                                            </a>
+                                            
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <a class="nav-link text-center" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <!-- End Comment -->
+                        
+                        <!-- Profile -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-muted  " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="/img/users/5.jpg" alt="user" class="profile-pic" /></a>
+                            <div class="dropdown-menu dropdown-menu-right animated zoomIn">
+                                <ul class="dropdown-user">
+                                    <li><a href="/users/profile"><i class="ti-user"></i> Profile</a></li>
+                                    <li><a href="/users/profile/settings"><i class="ti-settings"></i> Settings</a></li>
+                                    <li><a href="/users/logout"><i class="fa fa-power-off"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+        <!-- End header header -->
+
+        <!-- Left Sidebar  -->
+        <div class="left-sidebar">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="nav-devider"></li>
+                        <li> <a href="#"><i class="fa fa-home"></i><span>Home</span></a> </li>
+                        <li> <a class="has-arrow" href="#" aria-expanded="false"><i class="fa fa-bank"></i><span class="hide-menu">Accounts</span></a>
+                            <ul aria-expanded="false" class="collapse">
+                                <li><a href="/users/dashboard/accounts/credit">Credit</a></li>
+                                <li><a href="/users/dashboard/accounts/savings">Savings</a></li>
+                                <li><a href="/users/dashboard/accounts/current">Current</a></li>
+                            </ul>
+                        </li>
+                        <li> <a href="#" class="disabled"><i class="fa fa-bitcoin"></i><span>Criptocurrency</span></a> </li>
+                        <li> <a href="#" class="disabled"><i class="fa fa-money"></i><span>Investments</span></a> </li>
+                        <li> <a href="#" class="disabled"><i class="fa fa-book"></i><span>Balance</span></a> </li>
+                        <li> <a href="#" class="disabled"><i class="fa fa-line-chart"></i><span>Analitics</span></a> </li>
+                    </ul>
+                </nav>
+            
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </div>
+        <!-- End Left Sidebar  -->
+
+
+        <!-- Page wrapper  -->
+        <div class="page-wrapper">
+            <!-- Bread crumb -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-primary"><%= title %></h3> </div>
+            </div>
+            <!-- End Bread crumb -->
+            <!-- Container fluid  -->
+            <div class="container-fluid">
+                <!-- Start Page Content -->
+                <div class="card-body">
+                        <div class="horizontal-form-elements">
+                            <form class="form-horizontal" action="/users/dashboard/add_account" method="POST">
+                                <div class="row">
+                                        <div class="form-group">
+                                                <label class="col-sm-2 control-label">Account Type</label>
+                                                <div class="col-sm-12">
+                                                    <select class="form-control" type="text" pla="Type" name="selectpicker">
+                                                            <option value="" disabled selected hidden>Type</option>
+                                                            <option name="credit"> Credit</option>
+                                                            <option name="saving"> Savings</option>
+                                                            <option name="current"> Current</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Choose Bank </label>
+                                                    <div class="col-sm-12">
+                                                        <select class="form-control" type="text" name="selectbank">
+                                                                <option value="" disabled selected hidden>Bank</option>
+                                                                <option value="1">BANCOLOMBIA</option>
+                                                                <option value="2">BANCO AGRARIO</option>
+                                                                <option value="3">BANCO AV VILLAS</option>
+                                                                <option value="4">BANCO CAJA SOCIAL</option>
+                                                                <option value="5">BANCO COLPATRIA </option>
+                                                                <option value="6">BANCO COMPARTIR S.A.</option>
+                                                                <option value="7">BANCO COOPERATIVO COOPCENTRAL</option>
+                                                                <option value="8">BANCO DAVIVIENDA </option>
+                                                                <option value="9">BANCO DE BOGOTÁ</option>
+                                                                <option value="10">BANCO DE OCCIDENTE</option>
+                                                                <option value="11">BANCO FALABELLA S.A.</option>
+                                                                <option value="12">BANCO FINANDINA S.A.</option>
+                                                                <option value="13">BANCO GNB COLOMBIA S.A</option>
+                                                                <option value="14">BANCO GNB SUDAMERIS </option>
+                                                                <option value="15">BANCO MULTIBANK S.A</option>
+                                                                <option value="16">BANCO PICHINCHA</option>
+                                                                <option value="17">BANCO POPULAR</option>
+                                                                <option value="18">BANCO PROCREDIT</option>
+                                                                <option value="19">BANCO SANTANDER DE NEGOCIOS</option>
+                                                                <option value="20">BANCO W S.A</option>
+                                                                <option value="21">BANCOOMEVA</option>
+                                                                <option value="22">BBVA</option>
+                                                                <option value="23">CITIBANK</option>
+                                                                <option value="24">COLTEFINANCIERA S.A.</option>
+                                                                <option value="25">CONFIAR </option>
+                                                            </select>
+                                                    </div>
+                                                </div>
+                                            <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Account Number</label>
+                                                    <div class="col-sm-12">
+                                                        <textarea class="form-control" rows="3" placeholder="Account Number" name="account_number"></textarea>
+                                                    </div>
+                                                </div>
+                                            <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Good Thru</label>
+                                                    <div class="col-sm-12">
+                                                        <textarea class="form-control" rows="3" placeholder="01/18" name="dateaccount"></textarea>
+                                                    </div>
+                                                </div>
+                                            
+                                                <div class="form-group">
+                                                        <label class="col-sm-2 control-label"></label>
+                                                        <div class="col-sm-12">
+																													<button type="submit" class="btn btn-info btn-flat m-b-30 m-t-30">Add</button>
+                                                          
+                                                        </div>
+                                                    </div>
+
+                                </div> 
+                        </form>    
+                    </div>
+                </div>
+            </div>
+            <!-- End Container fluid  -->
+            <!-- footer -->
+            <footer class="footer"> © 2018 EasyFinance. All rights reserved.</footer>
+            <!-- End footer -->
+        </div>
+        <!-- End Page wrapper  -->
+    </div>
+    <!-- End Wrapper -->
+    <!-- All Jquery -->
+    <script src="/js/lib/jquery/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="/js/lib/bootstrap/js/popper.min.js"></script>
+    <script src="/js/lib/bootstrap/js/bootstrap.min.js"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="/js/jquery.slimscroll.js"></script>
+    <!--Menu sidebar -->
+    <script src="/js/sidebarmenu.js"></script>
+    <!--stickey kit -->
+    <script src="/js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
+    <!--Custom JavaScript -->
+
+
+    <!-- Amchart -->
+     <script src="/js/lib/morris-chart/raphael-min.js"></script>
+    <script src="/js/lib/morris-chart/morris.js"></script>
+    <script src="/js/lib/morris-chart/dashboard1-init.js"></script>
+	<script src="/js/lib/calendar-2/moment.latest.min.js"></script>
+    <!-- scripit init-->
+    <script src="/js/lib/calendar-2/semantic.ui.min.js"></script>
+    <!-- scripit init-->
+    <script src="/js/lib/calendar-2/prism.min.js"></script>
+    <!-- scripit init-->
+    <script src="/js/lib/calendar-2/pignose.calendar.min.js"></script>
+    <!-- scripit init-->
+    <script src="/js/lib/calendar-2/pignose.init.js"></script>
+    <script src="/js/lib/owl-carousel/owl.carousel.min.js"></script>
+    <script src="/js/lib/owl-carousel/owl.carousel-init.js"></script>
+    <script src="/js/scripts.js"></script>
+    <!-- scripit init-->
+    <script src="/js/custom.min.js"></script>
+
+</body>
+
+</html>
