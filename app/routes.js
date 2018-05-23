@@ -91,7 +91,7 @@ module.exports = function(app, passport) {
 	});
 
 	app.get("/users/dashboard/add_account", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/addaccount", {
+		res.render("./user/dashboard/addbank", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Add an Account"
@@ -131,7 +131,7 @@ module.exports = function(app, passport) {
 				}
 
 				data.id = rows.insertId;
-				res.render("./user/dashboard/addaccount", {
+				res.render("./user/dashboard/addbank", {
 					//add more logic here!
 					user: req.user, // get the user out of session and pass to template
 					title: "Done,Account Added!"
@@ -333,7 +333,7 @@ module.exports = function(app, passport) {
 	// SECTION:PROFILE
 	// =====================================
 	app.get("/users/profile", isLoggedIn, function(req, res) {
-		res.render("./user/profile", {
+		res.render("./user/dashboard/profile", {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
@@ -341,7 +341,7 @@ module.exports = function(app, passport) {
 	// SECTION:TERMS
 	// =====================================
 	app.get("/users/profile", isLoggedIn, function(req, res) {
-		res.render("./user/profile", {
+		res.render("./user/dashboard/profile", {
 			user: req.user // get the user out of session and pass to template
 		});
 	});

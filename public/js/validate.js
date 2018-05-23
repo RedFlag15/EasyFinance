@@ -4,7 +4,6 @@ function validateEmail(email){
 }
 
 
-
 function validate(){
     var pass = $("#inputPassword").val();
     var $emailval = $("#emailval");
@@ -15,6 +14,7 @@ function validate(){
     var passconfirm = $("#inputPasswordConfirm").val()
     var $passconfirmation = $("#passconfirmation")
     var email = $("#email").val();
+
     
 
     $emailval.text("")
@@ -46,6 +46,7 @@ function validate(){
     if (pass.search(/[0-9]/) === -1){
         $passval2.text("* Use a number (e.g. 1234)");
         $passval2.css("color", "red");
+        
     }
     else{
         $passval2.text("Use a number");
@@ -81,5 +82,63 @@ function validate(){
         }
     }
 
-    return false
+    return false;
+}
+
+function validateField(field){
+    var x = field["id"];
+    if (x === "email"){
+        var email = $("#email").val();
+        if (validateEmail(email)){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+    if (x === "inputPassword"){
+        var pass = $("#inputPassword").val();
+        if (pass.length < 8){
+            return false;
+        }
+        if (pass.search(/[0-9]/) === -1){
+            return false;       
+        }
+        if (pass.search(/[A-Z]/) < 0 || pass.search(/[a-z]/) < 0){
+            return false;
+        }     
+        if (pass.search(/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/) < 0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    if (x === "inputPasswordConfirm"){
+        var pass = $("#inputPassword").val();
+        var passconfirm = $("#inputPasswordConfirm").val()
+        if (pass === passconfirm){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    if (x === "submitButton")
+    {
+        return true;
+    }
+}
+
+function validateForm(){
+    var x = document.forms["formtovalidate"];
+
+    for (var i = 0; i < x.length; i=i+1){
+        if (!validateField(x[i])){
+            validate();
+            alert("Invalid Fields.")
+            return false;
+        }
+    }
 }

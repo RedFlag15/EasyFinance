@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: black">
 
 <head>
     <meta charset="utf-8">
@@ -11,8 +11,6 @@
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon.png">
     <title>EasyFinance</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="/css/helper.css" rel="stylesheet">
     <link href="/css/style2.css" rel="stylesheet">
@@ -59,7 +57,7 @@
         </div>
       </header>
 
-<body class="fix-header fix-sidebar">
+<body class="fix-header fix-sidebar" style="background-color: #199EB8">
     <!-- Preloader - style you can find in spinners.css -->
     <div class="preloader">
         <svg class="circular" viewBox="25 25 50 50">
@@ -72,39 +70,40 @@
             <div class="container-fluid">
                 <div class="row justify-content-center">
                     <div class="col-lg-4">
-                        <div class="login-content card">
+                        <div class="login-content card"  style="border-radius: 4%">
                             <div class="login-form">
                               <!-- show any messages that come back with authentication -->
                                 <% if (message.length > 0) { %>
                                   <div class="alert alert-danger"><%= message %></div>
                                 <% } %>
                                 <h4>Register</h4>
-                                <form data-toggle="validator" role="form" action="/users/signup" method="post">
+                                <form name="formtovalidate" onsubmit="return validateForm()" action="/users/signup" method="POST">
                                     <div class="form-group">
-                                        <label for="inputEmail" class="control-label">Email</label>
-                                        <input type="email" class="form-control" id="inputEmail" placeholder="Email" data-error="* Not a valid email address" required name="email">
-                                        <div class="help-block with-errors"></div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="inputPassword" class="control-label">Password</label>
-                                        <input type="password" data-minlength="6" class="form-control" id="inputPassword" placeholder="Example: Abcd_1234" required>
-                                        <div class="help-block">Minimum of 6 characters</div>
+                                        <label class="control-label">Email</label>
+                                        <input name="email" onkeyup="validate()" type="email" class="form-control" id="email" placeholder="Email" required>
+                                        <div id = "emailval"></div>
                                     </div>
                                     <div class="form-group">
-                                      <label for="inputPassword" class="control-label">Password Confirm</label>
-                                      <input type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Passwords don't match" placeholder="Confirm" required name="password">
-                                      <div class="help-block with-errors"></div>
+                                        <label class="control-label">Password</label>
+                                        <input onkeyup="validate()" type="password" data-minlength="8" maxlength="50" class="form-control" id="inputPassword" placeholder="Example: Abcd_1234" required>
+                                        <div class="help-block" id = "passval"></div>
+                                        <div class="help-block" id = "passval2"></div>
+                                        <div class="help-block" id = "passval3"></div>
+                                        <div class="help-block" id = "passval4"></div>
                                     </div>
-                                    <div class="checkbox">
-                                        <label>
-										      <input type="checkbox"> Agree the terms and policy
-									   </label>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">Register</button>
-                                    <div class="register-link m-t-15 text-center">
-                                        <p>Already have account ? <a href="/users/login"> Sign in</a></p>
-                                    </div>
+                                    <div class="form-group">
+                                      <label class="control-label">Password Confirm</label>
+                                      <input onkeyup="validate()" type="password" class="form-control" id="inputPasswordConfirm" placeholder="Confirm" required name="password">
+                                      <div class="help-block with-errors" id = "passconfirmation"></div>
+                                    </div>                                    
+                                    <button type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30" id="submitButton">Register</button>
                                 </form>
+                                <div class="register-link m-t-15 text-center">
+                                      <p>By clicking Register, you agree to our <a target="_blank" href="/terms">Terms and Policy</a></p>
+                                    </div>
+                                    <div class="register-link m-t-15 text-center">
+                                        <p>Already have account ? <a href="/login"> Sign in</a></p>
+                                    </div>
                             </div>
                         </div>
                     </div>
@@ -114,21 +113,8 @@
 
     </div>
     <!-- End Wrapper -->
-
-    <!-- All Jquery -->
-    <script src="/js/lib/jquery/jquery.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="/js/lib/bootstrap/js/popper.min.js"></script>
-    <script src="/js/lib/bootstrap/js/bootstrap.min.js"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script src="/js/jquery.slimscroll.js"></script>
-    <!--Menu sidebar -->
-    <script src="/js/sidebarmenu.js"></script>
-    <!--stickey kit -->
-    <script src="/js/lib/sticky-kit-master/dist/sticky-kit.min.js"></script>
-    <!--Custom JavaScript -->
-    <script src="/js/custom.min.js"></script>  
-    <script src="/js/validator.js"></script
+    <% include ./../partials/base/footer %>
+    <% include ./../partials/base/jsstart %>
 
 </body>
 

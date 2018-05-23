@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <% include ./../../partials/dashboard/head %>
+    <% include ./../../partials/dashboard/dash_head %>
 </head>
 <body class="fix-header fix-sidebar">
     <!-- Preloader - style you can find in spinners.css -->
@@ -17,7 +17,7 @@
         </div>
         <!-- End header header -->
         <!-- Left Sidebar  -->
-        <% include ./../../partials/dashboard/leftsidebar %>
+        <% include ./../../partials/dashboard/dash_sidebar %>
         <!-- End Left Sidebar  -->
         <!-- Page wrapper  -->
         <div class="page-wrapper">
@@ -70,13 +70,13 @@
             <!-- End Container fluid  -->
             
             <!-- footer -->
-            <footer class="footer"> © 2018 EasyFinance. All rights reserved.</footer>
+            <% include ./../../partials/dashboard/footer %>
             <!-- End footer -->
         </div>
         <!-- End Page wrapper  -->
     </div>
     <!-- End Wrapper -->
-    <% include ./../../partials/dashboard/customjs %>
+    <% include ./../../partials/dashboard/libjs %>
 
 </body>
 
