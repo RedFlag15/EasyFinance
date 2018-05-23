@@ -64,7 +64,8 @@
                                     <ul class="nav nav-tabs profile-tab" role="tablist">
                                 
                                         <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#profile" role="tab" >Profile</a> </li>
-                                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#settings" role="tab">Settings</a> </li>
+                                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#cprofile" role="tab">Change Profile</a> </li>
+                                        <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#cpassword" role="tab">Change Password</a> </li>
                                     </ul>
                                     <!-- Tab panes -->
                                     <div class="tab-content" style="padding-top: 5px">
@@ -88,28 +89,48 @@
                                                 
                                             </div>
                                         </div>
-                                        <div class="tab-pane" id="settings" role="tabpanel">
+                                        <div class="tab-pane" id="cprofile" role="tabpanel">
                                             <div class="card-body">
-                                                <form class="form-horizontal form-material" name="formtovalidate" onsubmit="return validateForm()" action="" method="post">
-
+                                                <form action="" method="post">
                                                     <div class="form-group">
                                                         <label class="control-label">Profile Picture</label>
-                                                        <input type="file" id="profilePic" class="">
-                                                    </div>
-                                                
+                                                        <input type="file" id="profilePic" name="picture">
+                                                    </div>    
+                                                    <div class="form-group">
+                                                        <label class="control-label">ID</label>
+                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="iduser">
+                                                    </div>                                   
                                                     <div class="form-group">
                                                         <label class="control-label">Name</label>
-                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50">
+                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="name">
                                                     </div>
-
                                                     <div class="form-group">
                                                         <label class="control-label">Lastname</label>
-                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50">
-                                                    </div>
-
+                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="lastname">
+                                                    </div>                                                    
                                                     <div class="form-group">
-                                                        <label for="inputPassword" class="control-label">Password</label>
-                                                        <input onkeyup="validate()" type="password" data-minlength="8" maxlength="50"class="form-control" id="inputPassword" placeholder="Example: Abcd_1234">
+                                                        <div class="col-sm-12">
+                                                            <button type="submit" class="btn btn-success">Update Profile</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane" id="cpassword" role="tabpanel">
+                                            <div class="card-body">
+                                                <form class="form-horizontal form-material" name="formtovalidate" onsubmit="return validateForm()" action="" method="post">
+                                                    <div class="form-group">
+                                                        <label for="inputPassword" class="control-label">Old Password</label>
+                                                        <input onkeyup="validateOld()" type="password" data-minlength="8" maxlength="50"class="form-control" id="oldinputPassword" placeholder="Example: Abcd_1234" name="oldpassword">
+                                                        <div class="help-block" id = "passvalold"></div>
+                                                        <div class="help-block" id = "passval2old"></div>
+                                                        <div class="help-block" id = "passval3old"></div>
+                                                        <div class="help-block" id = "passval4old"></div>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="inputPassword" class="control-label">New Password</label>
+                                                        <input onkeyup="validate()" type="New password" data-minlength="8" maxlength="50"class="form-control" id="inputPassword" placeholder="Example: Abcd_1234">
                                                         <div class="help-block" id = "passval"></div>
                                                         <div class="help-block" id = "passval2"></div>
                                                         <div class="help-block" id = "passval3"></div>
@@ -118,13 +139,13 @@
                                                     
                                                     <div class="form-group">
                                                         <label for="inputPassword" class="control-label">Password Confirm</label>
-                                                        <input onkeyup="validate()" type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Passwords don't match" placeholder="Confirm">
+                                                        <input onkeyup="validate()" type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Passwords don't match" placeholder="Confirm" name="password">
                                                         <div class="help-block with-errors" id = "passconfirmation"></div>
                                                     </div>
                                                     
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
-                                                            <button  type="submit" id="submitButton" class="btn btn-success">Update Profile</button>
+                                                            <button  type="submit" id="submitButton" class="btn btn-success">Change Password</button>
                                                         </div>
                                                     </div>
                                                 </form>
