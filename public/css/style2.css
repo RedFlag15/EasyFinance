@@ -6749,6 +6749,20 @@ select#soflow-color {
   padding-left: 15px;
 }
 
+table {
+  font-family:  'Open Sans', sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid rgb(172, 228, 240);
+  text-align: center;
+  padding: 8px;
+}
+
+
+
 /*
 /* Version: 1.0
 */
