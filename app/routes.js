@@ -1,31 +1,14 @@
-/*URLS Action endpoints
-	www.easyf.co/										[get]	:Done
-				about/  								[get]	:Done
-	 			users/ 									[redirect] :Done
-		  			login/								[get, post]:Done
-					signup/								[get, post]
-					dashboard/							[get, post]
-							 profile/ 					[get, post, delete]
-							 	settings				[get, post]
-							 accounts/					[get, post, delete, put]
-		  	          	     	savings					[get, post, delete, put]
-							 	current					[get, post, delete, put]
-							 	loan					[get, post, delete, put]
-							 analitics/					[get]
-							 investments/				[get, post]
-							 budgets/					[get, post]
-							 cryptomoney/				[get, post]
-*/
 const mysql = require("mysql");
 const crypto = require("crypto");
 const async = require("async");
 const nodemailer = require("nodemailer");
-
 const dbconfig = require("../config/database");
 const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
-//connection.query("USE " + dbconfig.database);
 module.exports = function(app, passport) {
+	// EASYFINANCE.CO APPLICATION, UTP 2018.
+	// easyfinance.co@gmail.com
+
 	// =====================================
 	// SECTION:HOME PAGE, LANDING
 	// =====================================
@@ -259,7 +242,7 @@ module.exports = function(app, passport) {
 	});
 
 	app.post("/users/password_recovery", function(req, res) {
-		res.json("Okay, route implemented");
+		res.json("Okay, route needs to be implemented");
 	});
 
 	app.post("/users/forgot", function(req, res, next) {
@@ -330,6 +313,16 @@ module.exports = function(app, passport) {
 	});
 
 	// =====================================
+	// SECTION:BUDGETS
+	// =====================================
+
+	app.get("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/create_budget", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	// =====================================
 	// SECTION:PROFILE
 	// =====================================
 	app.get("/users/profile", isLoggedIn, function(req, res) {
@@ -337,11 +330,47 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
+	// =====================================
+	// SECTION:ANALITICS
+	// =====================================
+	app.get("/users/dashboard/analitics", isLoggedIn, function(req, res) {
+		res.render("./user/terms", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	// =====================================
+	// SECTION:CRIPTOMONEY
+	// =====================================
+	app.get("/users/dashboard/cryptomoney", isLoggedIn, function(req, res) {
+		res.render("./user/terms", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	// =====================================
+	// SECTION:INVESTMENTS
+	// =====================================
+	app.get("/users/dashboard/investments", isLoggedIn, function(req, res) {
+		res.render("./user/terms", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
 	// =====================================
 	// SECTION:TERMS
 	// =====================================
-	app.get("/users/profile", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/profile", {
+	app.get("/terms", isLoggedIn, function(req, res) {
+		res.render("./user/terms", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+	// =====================================
+	// SECTION:ABOUT
+	// =====================================
+	app.get("/about", isLoggedIn, function(req, res) {
+		res.render("./user/terms", {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
