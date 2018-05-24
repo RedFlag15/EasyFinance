@@ -1,6 +1,7 @@
 function bankname(){
   var name = $("#searchbar").val();
   $("#bankname").text(name);
+  document.getElementById("hiddenbank").value = name;
 }
 
 function deleteAcc(){
