@@ -58,7 +58,25 @@
                             <div class="form-group">
                                  <label class="control-label">Link the Accounts</label>
                                  <!--modal?-->
-                                 <% include ./../../partials/dashboard/listaccounts.ejs %>
+                                 <div class="login-form">
+                                    <h2 class="control-label">Select to Sync your Accounts</h4>
+                                    <form>
+                                        <label class="control-label">Credit Accounts</label>
+                                        <div class="form-group">
+                                                <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                                        </div>
+                                        <label class="control-label">Savings Accounts</label>
+                                        <div class="form-group">
+                                                <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                                        </div>
+                                        <label class="control-label">Currrent Accounts</label>
+                                        <div class="form-group">
+                                                <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Sync</button>
+                                        <button href="/users/dashboard/add_account" class="btn btn-secondary">Cancel</button>
+                                    </form>
+                                </div>
                                  <!-- Formulario checkbox con las cuentas del usuario -->
 
                             </div>
