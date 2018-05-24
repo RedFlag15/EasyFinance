@@ -3,6 +3,9 @@ function bankname(){
   $("#bankname").text(name);
 }
 
+function deleteAcc(){
+  confirm("Are you sure you want to Delete this Account?");
+}
 
 var listBank = ["BANCOLOMBIA",
 "BANCO AGRARIO",

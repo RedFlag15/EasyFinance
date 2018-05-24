@@ -1,0 +1,37 @@
+<div class="modal" tabindex="-1" role="dialog" id="transfer">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Transaction between Budgets</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="document.getElementById('transfer').style.display='none'">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="POST">
+            <div class="form-group">
+                <select id="soflow">
+                    <option>Select Receiver Budget</option>
+                    <option>lista de cuentas de presupuesto</option>
+                    <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
+                </select>
+            </div>
+                <label>Input the Amount to Transfer</label>
+                <input name="money" type="number" min="0" step="any" class="form-control" placeholder="Amount" required>
+            <div class="form-group">
+                <select id="soflow">
+                    <option>Select Receiver Budget</option>
+                    <option>lista de cuentas de presupuesto</option>
+                    <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
+                </select>
+            </div>
+            
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary">Transfer</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="document.getElementById('transfer').style.display='none'">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

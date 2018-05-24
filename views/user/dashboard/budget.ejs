@@ -26,7 +26,7 @@
             <!-- Bread crumb -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h3 class="text-primary">Current Accounts</h3> </div>
+                    <h3 class="text-primary">Credit Accounts</h3> </div>
             </div>
             <!-- End Bread crumb -->
             <!-- Container fluid  -->
@@ -41,6 +41,7 @@
                                     <th>Account</th>
                                     <th>Bank</th>
                                     <th>Balance</th>
+                                    <th>Currency</th>
                                     <th>Delete</th>
                                 </tr>
                                 <!--De Api-->
@@ -48,14 +49,17 @@
                                     <td>xxxxx</td>
                                     <td>xxxxx</td>
                                     <td>xxxxx</td>
+                                    <td>xxxxx</td>
                                     <td><button class="btn btn-primary btn-flat" onclick="deleteAcc()">Delete</button></td>
                                 </tr>
                                 <!--!!-->
                             </table>
+                            <td><button onclick="document.getElementById('transfer').style.display='block'" class="btn btn-primary btn-flat">Transfer</button></td>
                         </div>
                     </div>
                 </div>
             </div>
+            <% include ./../../partials/dashboard/transfer %>
             <!-- End Container fluid  -->
             <!-- footer -->
             <footer class="footer"> © 2018 EasyFinance. All rights reserved.</footer>
