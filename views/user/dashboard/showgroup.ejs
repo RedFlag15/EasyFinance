@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include ./../../partials/dashboard/dash_head %>
+</head>
+<body class="fix-header fix-sidebar">
+    <!-- Preloader - style you can find in spinners.css -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+    </div>
+
+    <!-- Main wrapper  -->
+    <div id="main-wrapper">
+        <!-- header header  -->
+        <div class="header">
+            <% include ./../../partials/dashboard/dash_header %>
+        </div>
+        <!-- End header header -->
+
+        <!-- Left Sidebar  -->
+        <% include ./../../partials/dashboard/dash_sidebar %>
+        <!-- End Left Sidebar  -->
+        <!-- Page wrapper  -->
+        <div class="page-wrapper">
+            <!-- Bread crumb -->
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-primary">Nombre del grupo</h3> </div>
+            </div>
+            <!-- End Bread crumb -->
+            <!-- Container fluid  -->
+            <div class="container-fluid">
+    
+                <!-- Start Page Content -->
+                <div class="card-body">
+                    <div class="col-md-3">
+                        <a href="#" onclick="document.getElementById('coin').style.display='block'">
+                        <div class="card p-30">
+                            <div class="media">
+                                <div class="media-left meida media-middle">
+                                    <span><i class="fa fa-usd f-s-40 color-primary"></i></span>
+                                </div>
+                                <div class="media-body media-text-right">
+                                    <h2>0</h2>
+                                    <p class="m-b-0">Balance</p>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                </div>
+
+                 <div class="card-body">
+                    <div class="login-form">
+                        <h2 class="control-label">Add Account</h4>
+                        <form>
+                            <label class="control-label">Credit Accounts</label>
+                            <div class="form-group">
+                                    <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                            </div>
+                            <label class="control-label">Savings Accounts</label>
+                            <div class="form-group">
+                                    <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                            </div>
+                            <label class="control-label">Currrent Accounts</label>
+                            <div class="form-group">
+                                    <input name="name" type="checkbox" class="form-control" placeholder="account" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="login-form">
+                        <div class="form-group">
+                            <table>
+                                <tr>
+                                    <th>Account</th>
+                                    <th>Type</th>
+                                    <th>Bank</th>
+                                    <th>Balance</th>                                    
+                                    <th>Delete</th>
+                                </tr>
+                                <!--De Api-->
+                                <tr>
+                                    <td>xxxxx</td>
+                                    <th>xxxxx</th>
+                                    <td>xxxxx</td>
+                                    <td>xxxxx</td>
+                                    <td><button class="btn btn-primary btn-flat" onclick="deleteAcc()">Delete</button></td>
+                                </tr>
+                                <!--!!-->
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                
+
+            </div>
+            <!-- End Container fluid  -->
+            <% include ./../../partials/dashboard/changecoin %>
+            <!-- footer -->
+            <footer class="footer"> © 2018 EasyFinance. All rights reserved.</footer>
+            <!-- End footer -->
+        </div>
+        <!-- End Page wrapper  -->
+    </div>
+    <!-- End Wrapper -->
+    <% include ./../../partials/dashboard/libjs %>
+
+</body>
+
+</html>
