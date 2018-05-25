@@ -6,10 +6,10 @@ const nodemailer = require("nodemailer");
 const dbconfig = require("../config/database");
 const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
+
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
-
 	// =====================================
 	// SECTION:HOME PAGE, LANDING
 	// =====================================
@@ -76,8 +76,30 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
-
 	app.get("/users/dashboard/add_account", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/addbank", {
+			//add more logic here!
+			user: req.user, // get the user out of session and pass to template
+			title: "Add an Account"
+		});
+	});
+
+	app.post("/users/dashboard/add_account", isLoggedIn, function(req, res) {
+		var id_persona = 98765;
+		var banco = "BBVA";
+		var clave = 8888;
+		console.log(req.body);
+		request(
+			{
+				method: "GET",
+				uri: "https://apibank.herokuapp.com/account/"
+			},
+			function(error, response, body) {
+				// body is the decompressed response bod
+				console.log(response.body);
+			}
+		);
+
 		res.render("./user/dashboard/addbank", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
@@ -230,12 +252,11 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.post("/users/password_recovery", function(req, res) {
-		res.json("Okay, route needs to be implemented");
-	});
-
-	app.post("/users/forgot", function(req, res, next) {
-		console.log("Solicitud recibida de: " + req.body.email);
+	app.post("/users/password_recovery", function(req, res, next) {
+		console.log(
+			"Email address request to recover password: " + req.body.email
+		);
+		console.log(req.body);
 		async.waterfall(
 			[
 				function(done) {
@@ -245,43 +266,39 @@ module.exports = function(app, passport) {
 						done(err, token);
 					});
 				},
-				/*function(token, done) {
-					console.log("Using the token for search");
-					emailQuery = "select * from user where username=?";
-					connection.query(emailQuery, ["potter@magic.co"], function(
-						err,
-						rows
-					) {
-						if (err) {
-							console.log(
-								"thereis no user with that Email address"
-							);
-							throw err;
-						}
-						data = rows[0];
-						console.log(`Database Okay ${data}`);
-					});
-				},
-				function(token, user, done) {*/
+
 				function(token, done) {
+					console.log("Using the token for search");
+
+					//agregar una funcion que envie un true o false!
+					user = req.body.email;
+					console.log(token, user);
+					searchEmail();
+					console.log(req.body.email);
+					done(null, token, user);
+				},
+				function(token, user, done) {
+					//function(token, done) {
+					console.log("Sending Email :) to");
+					console.log(user);
 					var smtpTransport = nodemailer.createTransport(
-						"smtps://easyfinance.co@gmail.com3:" +
+						"smtps://easyfinance.co@gmail.com:" +
 							encodeURIComponent("karminakoala2018") +
 							"@smtp.gmail.com:465"
 					);
 					var mailOptions = {
-						to: "hfjimenez@utp.edu.co",
+						to: user,
 						from: "EasyFinance.co <easyfinance.co@gmail.com>",
-						subject: "Node.js Password Reset",
+						subject: "Easyfinance.co Password Reset",
 						text:
 							"You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
 							"Please click on the following link, or paste this into your browser to complete the process:\n\n" +
 							"http://" +
 							req.headers.host +
-							"/reset/" +
+							"/users/reset/" +
 							token +
 							"\n\n" +
-							"If you did not request this, please ignore this email and your password will remain unchanged.\n"
+							"If you did not request this, please ignore this email and your password will remain unchanged.\nSecurity Team Easyfinance.co"
 					};
 					smtpTransport.sendMail(mailOptions, function(err) {
 						req.flash(
@@ -296,7 +313,7 @@ module.exports = function(app, passport) {
 			],
 			function(err) {
 				if (err) return next(err);
-				res.redirect("/users/forgot");
+				res.redirect("/users/password_recovery");
 			}
 		);
 	});
@@ -423,6 +440,22 @@ module.exports = function(app, passport) {
 		res.redirect("/users/login");
 	});
 };
+
+function searchEmail(email) {
+	console.log("Dentro de funcion buscaemail");
+	console.log(email);
+	queryEmail = "select * from user where username = ?";
+	connection.query(queryEmail, [email], function(err, user) {
+		if (err) return done(err);
+		if (user.length) {
+			console.log(user[0]);
+		}
+	});
+}
+
+function saveToken(token) {
+	return;
+}
 
 // route middleware to make sure
 function isLoggedIn(req, res, next) {
