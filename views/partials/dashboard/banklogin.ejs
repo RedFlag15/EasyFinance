@@ -8,12 +8,12 @@
         </button>
       </div>
       <div class="modal-body">
-        <form action="/users/dashboard/add_account" method="POST">
+        <form action="/users/dashboard/sync_bank" method="POST">
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="User id" required name="idUser">
             </div>
             <div class="form-group">
-                <input class="form-control" type="password" placeholder="Pin password" required name="password">
+                <input class="form-control" type="password" placeholder="Pin password" required name="pin_password">
             </div>
             <input name="bank" type='hidden' id= "hiddenbank" name='id' value='' />
             <button type="submit" class="btn btn-primary">Login</button>

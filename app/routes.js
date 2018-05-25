@@ -76,6 +76,7 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
 	app.get("/users/dashboard/add_account", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/addbank", {
 			//add more logic here!
@@ -84,44 +85,50 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.post("/users/dashboard/add_account", isLoggedIn, function(req, res) {
-		var id_persona = 98765;
-		var banco = "BBVA";
-		var clave = 8888;
-		console.log("LO DE ADD_ACCC**********");
-		console.log(req.body);
-		res.render("./user/dashboard/addbank", {
-			//add more logic here!
-			user: req.user, // get the user out of session and pass to template
-			title: "Add an Account"
-		});
-	});
-
 	app.post("/users/dashboard/sync_bank", isLoggedIn, function(req, res) {
-		console.log("Cool you're sending post");
-		console.log(req.body);
+		//user details submitted
+		/*var id_persona = req.body.idUser;
+		var bank_name = req.body.bank;
+		var pin_password = req.body.pin_password;*/
+		var id_persona = 98765;
+		var bank_name = "BBVA";
+		var pin_password = 8888;
+		var vdata = {};
+
+		console.log("* Enviado por usuario"); //debug
+		console.log(req.body); //debug
+		console.log("##############"); //debug
+		var uribase =
+			"https://apibank.herokuapp.com/account/" +
+			id_persona +
+			"/" +
+			bank_name +
+			"/" +
+			pin_password;
+		console.log("* URL Base"); //debug
+		console.log(uribase); //debug
+		//search for user accounts of every type
+
 		request(
 			{
 				method: "GET",
-				uri: "https://apibank.herokuapp.com/account/98765/BBVA/8888"
+				uri: uribase,
+				gzip: true
 			},
 			function(error, response, body) {
-				// body is the decompressed response bod
-				console.log("the decoded data is: " + response);
+				console.log("the decoded data is: " + body); //debug
+				vdata = body;
+				console.log(vdata);
+				res.render("./user/dashboard/select_accounts", {
+					//add more logic here!
+					user: req.user, // get the user out of session and pass to template
+					title: "Select Accounts",
+					results: vdata
+				});
 			}
 		);
 
-		/*
-		request.post(
-			"https://apibank.herokuapp.com/user",
-			{ json: { id: "value" } },
-			function(error, response, body) {
-				if (!error && response.statusCode == 200) {
-					console.log(body);
-				}
-			}
-		);
-		*/
+		console.log("Yay");
 	});
 
 	app.get("/users/dashboard/accounts/credit", isLoggedIn, function(req, res) {
@@ -169,7 +176,7 @@ module.exports = function(app, passport) {
 			data.id = rows;
 			//console.log(rows);
 
-			res.render("./user/dashboard/credit", {
+			res.render("./user/dashboard/current", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
 				title: "Credit Accounts"
@@ -196,7 +203,7 @@ module.exports = function(app, passport) {
 			}
 			data.id = rows;
 			//console.log(rows);
-			res.render("./user/dashboard/credit", {
+			res.render("./user/dashboard/savings", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
 				title: "Credit Accounts"
