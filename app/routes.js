@@ -1,4 +1,5 @@
 const mysql = require("mysql");
+const request = require("request");
 const crypto = require("crypto");
 const async = require("async");
 const nodemailer = require("nodemailer");
@@ -16,6 +17,9 @@ module.exports = function(app, passport) {
 		res.render("index"); // load the index.ejs file
 	});
 
+	app.get("/users/", function(req, res) {
+		res.redirect("/users/login");
+	});
 	// =====================================
 	// SECTION:LOGIN
 	// =====================================
@@ -81,46 +85,31 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.post("/users/dashboard/add_account", isLoggedIn, function(req, res) {
-		//req ! ademas insert into las bases datos
-		//console.log(req);
-		var data = {
-			account_number: req.body.account_number,
-			date: req.body.dateaccount
-		};
-
-		if (req.body.selectpicker === "Savings") data.account_type = "saving";
-		else if (req.body.selectpicker === "Credit")
-			data.account_type = "credit";
-		else data.account_type = "current";
-		data.bank = req.body.selectbank; //Valor del id del banco
-		var insertQuery =
-			"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, type_acc, dateExp_acc) VALUES (?,?,?,?,?,?,?)";
-		connection.query(
-			insertQuery,
-			[
-				data.bank,
-				req.user.id,
-				1,
-				data.account_number,
-				true,
-				data.account_type,
-				data.date
-			],
-			function(err, rows) {
-				if (err) {
-					console.log("Wrong Insert Buuuuuuuuuu");
-					throw err;
-				}
-
-				data.id = rows.insertId;
-				res.render("./user/dashboard/addbank", {
-					//add more logic here!
-					user: req.user, // get the user out of session and pass to template
-					title: "Done,Account Added!"
-				});
+	app.post("/users/dashboard/sync_bank", isLoggedIn, function(req, res) {
+		console.log("Cool you're sending post");
+		console.log(req.body);
+		request(
+			{
+				method: "GET",
+				uri: "https://apibank.herokuapp.com/account/98765/BBVA/8888"
+			},
+			function(error, response, body) {
+				// body is the decompressed response bod
+				console.log("the decoded data is: " + response);
 			}
 		);
+
+		/*
+		request.post(
+			"https://apibank.herokuapp.com/user",
+			{ json: { id: "value" } },
+			function(error, response, body) {
+				if (!error && response.statusCode == 200) {
+					console.log(body);
+				}
+			}
+		);
+		*/
 	});
 
 	app.get("/users/dashboard/accounts/credit", isLoggedIn, function(req, res) {
@@ -321,6 +310,57 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+	//NO IMPLEMENTADO
+	// =====================================
+	// SECTION:GROUP ACCOUNTS
+	// =====================================
+
+	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/group_accounts", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	//NO IMPLEMENTADO
+	// =====================================
+	// SECTION:GROUP ACCOUNTS  SEE
+	// =====================================
+
+	app.get("/users/dashboard/accounts/groups", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/group", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	//NO IMPLEMENTADO
+	// =====================================
+	// SECTION:SHOW BUDGET
+	// =====================================
+
+	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/budget", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+	//NO IMPLEMENTADO
+	// =====================================
+	// SECTION:SHOW GROUP
+	// =====================================
+	app.get("/users/dashboard/showgroup", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/showgroup", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
+
+	// =====================================
+	// SECTION:GROUP ACCOUNTS
+	// =====================================
+
+	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/group_accounts", {
+			user: req.user // get the user out of session and pass to template
+		});
+	});
 
 	// =====================================
 	// SECTION:PROFILE
@@ -335,24 +375,24 @@ module.exports = function(app, passport) {
 	// SECTION:ANALITICS
 	// =====================================
 	app.get("/users/dashboard/analitics", isLoggedIn, function(req, res) {
-		res.render("./user/terms", {
-			user: req.user // get the user out of session and pass to template
-		});
+		res.send("NOT IMPLEMENTED :" + req.url);
 	});
 
 	// =====================================
 	// SECTION:CRIPTOMONEY
 	// =====================================
 	app.get("/users/dashboard/cryptomoney", isLoggedIn, function(req, res) {
-		res.render("./user/terms", {
-			user: req.user // get the user out of session and pass to template
-		});
+		res.send("NOT IMPLEMENTED :" + req.url);
 	});
 
 	// =====================================
 	// SECTION:INVESTMENTS
 	// =====================================
 	app.get("/users/dashboard/investments", isLoggedIn, function(req, res) {
+		res.send("NOT IMPLEMENTED :" + req.url);
+	});
+
+	app.get("/dummy", function(req, res) {
 		res.render("./user/terms", {
 			user: req.user // get the user out of session and pass to template
 		});
