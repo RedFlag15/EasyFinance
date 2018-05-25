@@ -732,7 +732,7 @@ h6.h1 {
   text-align: left;
 }
 .footer > p a {
-  color: #4680ff;
+  color: #199EB8;
 }
 .bar-hidden {
   overflow-X: hidden;
@@ -760,7 +760,7 @@ h6.h1 {
 }
 .notify .heartbit {
   animation: 1s ease-out 0s normal none infinite running heartbit;
-  border: 5px solid #4680ff;
+  border: 5px solid #199EB8;
   border-radius: 70px;
   height: 25px;
   position: absolute;
@@ -770,7 +770,7 @@ h6.h1 {
   z-index: 10;
 }
 .notify .point {
-  background-color: #4680ff;
+  background-color: #199EB8;
   border-radius: 30px;
   height: 6px;
   position: absolute;
@@ -826,7 +826,7 @@ h6.h1 {
 -------------------*/
 .color-primary,
 .text-primary {
-  color: #4680ff;
+  color: #199EB8;
 }
 .color-success,
 .text-success {
@@ -867,9 +867,9 @@ h6.h1 {
 /*    Background Mixins
 --------------------------*/
 .bg-primary {
-  background: #4680ff !important;
+  background: #199EB8 !important;
   color: #ffffff;
-  fill: #4680ff;
+  fill: #199EB8;
 }
 .bg-success {
   background: #26dad2 !important;
@@ -919,7 +919,7 @@ h6.h1 {
 /*    Border Mixins
 --------------------------*/
 .border-primary {
-  border-color: #4680ff;
+  border-color: #199EB8;
 }
 .border-success {
   border-color: #26dad2;
@@ -2448,7 +2448,7 @@ textarea {
   margin-bottom: 10px;
 }
 .timeline-badge.primary {
-  background-color: #4680ff !important;
+  background-color: #199EB8 !important;
 }
 .timeline-badge.success {
   background-color: #26dad2 !important;
@@ -2627,11 +2627,11 @@ table.dataTable thead .sorting::after {
   font-family: 'Poppins', sans-serif;
 }
 .panel-primary {
-  border-color: #4680ff;
+  border-color: #199EB8;
 }
 .panel-primary .panel-heading {
-  background: #4680ff;
-  border-color: #4680ff;
+  background: #199EB8;
+  border-color: #199EB8;
   color: #ffffff;
 }
 .panel-success {
@@ -4123,7 +4123,7 @@ table.dataTable thead .sorting::after {
 .control-bar {
   position: relative;
   z-index: 100;
-  background: #4680ff;
+  background: #199EB8;
   color: #ffffff;
   padding: 15px;
   margin-bottom: 30px;
@@ -4236,7 +4236,7 @@ table.dataTable thead .sorting::after {
 .invoicelist-body .control {
   display: inline-block;
   color: white;
-  background: #4680ff;
+  background: #199EB8;
   padding: 3px 7px;
   font-size: .9rem;
   text-transform: uppercase;
@@ -4278,7 +4278,7 @@ table.dataTable thead .sorting::after {
 }
 .invoicelist-footer table #total_price {
   font-size: 2rem;
-  color: #4680ff;
+  color: #199EB8;
 }
 /**
  * NOTE
@@ -4883,10 +4883,10 @@ footer p {
   border-radius: 100px;
 }
 .input-focus {
-  border-color: #4680ff;
+  border-color: #199EB8;
 }
 .input-focus:focus {
-  border-color: #4680ff;
+  border-color: #199EB8;
 }
 /*    Search Box Input Button
 --------------------------------*/
@@ -5234,10 +5234,10 @@ label {
   }
 }
 .progress-bar {
-  background-color: #4680ff;
+  background-color: #199EB8;
 }
 .progress-bar-primary {
-  background-color: #4680ff;
+  background-color: #199EB8;
 }
 .progress-bar-success {
   background-color: #26dad2;
@@ -5529,7 +5529,7 @@ tbody tr td:last-child {
   text-transform: uppercase;
 }
 .login-form label a {
-  color: #4680ff;
+  color: #199EB8;
 }
 .social-login-content {
   margin: 0px -30px;
@@ -5545,7 +5545,7 @@ tbody tr td:last-child {
   padding: 19px;
 }
 .register-link a {
-  color: #4680ff;
+  color: #199EB8;
 }
 .cpu-load {
   width: 100%;
@@ -5808,7 +5808,7 @@ tbody tr td:last-child {
   margin-top: 10px;
 }
 .profile-widget-one .profile-one-user-content .sold-amount {
-  color: #4680ff;
+  color: #199EB8;
   font-size: 24px;
   font-weight: 400;
   margin-top: 10px;
@@ -5822,14 +5822,14 @@ tbody tr td:last-child {
   text-transform: uppercase;
   padding: 8px 15px;
   font-weight: 400;
-  color: #4680ff;
+  color: #199EB8;
 }
 /*Aleart
 -------------*/
 .alert-primary {
   background-color: #a2bfff;
   border-color: #a2bfff;
-  color: #4680ff;
+  color: #199EB8;
 }
 .alert-success {
   background-color: #93ede9;
@@ -5861,7 +5861,7 @@ tbody tr td:last-child {
   background-color: #878787;
 }
 .label-primary {
-  background-color: #4680ff;
+  background-color: #199EB8;
 }
 .label-success {
   background-color: #26dad2;
@@ -6154,7 +6154,7 @@ tbody tr td:last-child {
   border-bottom: 1px solid #e7e7e7;
 }
 .order-list-item thead {
-  background: #4680ff;
+  background: #199EB8;
   text-align: left;
 }
 .order-list-item thead th {
@@ -6180,7 +6180,7 @@ tbody tr td:last-child {
 }
 .media-body span {
   font-size: 10px;
-  color: #4680ff;
+  color: #199EB8;
 }
 .media-body p {
   color: #99abb4;
@@ -6235,7 +6235,7 @@ tbody tr td:last-child {
   -moz-border-radius: 0 !important;
   background: #ffffff;
   border: none !important;
-  color: #4680ff;
+  color: #199EB8;
 }
 .dark-browse-input-box .dark-input-button i {
   font-weight: bold;
@@ -6243,7 +6243,7 @@ tbody tr td:last-child {
 }
 .dark-browse-input-box .dark-input-button:hover {
   background: #ffffff;
-  color: #4680ff;
+  color: #199EB8;
   -webkit-transition: all 0.3s;
   -moz-transition: all 0.3s;
   transition: all 0.3s;
@@ -6393,7 +6393,7 @@ tbody tr td:last-child {
 .ct-series-b .ct-line,
 .ct-series-b .ct-point,
 .ct-series-b .ct-slice-donut {
-  stroke: #4680ff;
+  stroke: #199EB8;
 }
 .ct-series-c .ct-bar,
 .ct-series-c .ct-line,
@@ -6415,7 +6415,7 @@ tbody tr td:last-child {
 .ct-series-b .ct-area,
 .ct-series-b .ct-slice-donut-solid,
 .ct-series-b .ct-slice-pie {
-  fill: #4680ff;
+  fill: #199EB8;
 }
 .ct-series-c .ct-area,
 .ct-series-c .ct-slice-donut-solid,
@@ -6658,10 +6658,10 @@ tbody tr td:last-child {
   padding: 20px 0;
 }
 .blockquote-box .blockquote-primary {
-  border-color: #4680ff;
+  border-color: #199EB8;
 }
 .blockquote-box .blockquote-primary .square {
-  background-color: #4680ff;
+  background-color: #199EB8;
   color: #ffffff;
 }
 .blockquote-box .blockquote-success {
