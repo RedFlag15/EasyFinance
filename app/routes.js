@@ -88,18 +88,8 @@ module.exports = function(app, passport) {
 		var id_persona = 98765;
 		var banco = "BBVA";
 		var clave = 8888;
+		console.log("LO DE ADD_ACCC**********");
 		console.log(req.body);
-		request(
-			{
-				method: "GET",
-				uri: "https://apibank.herokuapp.com/account/"
-			},
-			function(error, response, body) {
-				// body is the decompressed response bod
-				console.log(response.body);
-			}
-		);
-
 		res.render("./user/dashboard/addbank", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
