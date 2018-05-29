@@ -51,11 +51,11 @@
                                 <div class="card-two">
                                     <header>
                                         <div class="avatar">
-                                            <img src="/img/defaultprofile.png" />
+                                            <img src="/img/<%= profilePic %>" />
                                         </div>
                                     </header>
 
-                                    <h3>Name</h3>
+                                    <h3><%= profileName %></h3>
                                     <!--<div class="desc">
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit et cupiditate deleniti.
                                     </div>-->
@@ -76,13 +76,13 @@
                                                 <div class="row">
                                                     <div class="col-sm-4"> <strong>Full Name</strong>
                                                         <br>
-                                                        <p class="text-muted">Name Lastname</p>
+                                                        <p class="text-muted"><%= fname %> <%= lname %></p>
                                                     </div>
                                                     <div class="col-sm-4"> <strong>ID</strong>
-                                                        <p class="text-muted">ID</p>
+                                                        <p class="text-muted"><%= docId %></p>
                                                     </div>
                                                     <div class="col-sm-4"> <strong>Email</strong>
-                                                        <p class="text-muted">Email</p>
+                                                        <p class="text-muted"><%= email %></p>
                                                     </div>
                                                     
                                                 </div>
@@ -91,22 +91,22 @@
                                         </div>
                                         <div class="tab-pane" id="cprofile" role="tabpanel">
                                             <div class="card-body">
-                                                <form action="" method="post">
+                                                <form action="/users/profile" method="post" enctype="multipart/form-data">
                                                     <div class="form-group">
                                                         <label class="control-label">Profile Picture</label>
                                                         <input type="file" id="profilePic" name="picture">
                                                     </div>    
                                                     <div class="form-group">
                                                         <label class="control-label">ID</label>
-                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="iduser">
+                                                        <input type="text" placeholder="<%= docId %>" class="form-control form-control-line" maxlength="50" name="iduser">
                                                     </div>                                   
                                                     <div class="form-group">
                                                         <label class="control-label">Name</label>
-                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="name">
+                                                        <input type="text" placeholder="<%= fname %>" class="form-control form-control-line" maxlength="50" name="fname">
                                                     </div>
                                                     <div class="form-group">
                                                         <label class="control-label">Lastname</label>
-                                                        <input type="text" placeholder="" class="form-control form-control-line" maxlength="50" name="lastname">
+                                                        <input type="text" placeholder="<%= lname %>" class="form-control form-control-line" maxlength="50" name="lname">
                                                     </div>                                                    
                                                     <div class="form-group">
                                                         <div class="col-sm-12">
@@ -118,7 +118,7 @@
                                         </div>
                                         <div class="tab-pane" id="cpassword" role="tabpanel">
                                             <div class="card-body">
-                                                <form class="form-horizontal form-material" name="formtovalidate" onsubmit="return validateForm()" action="" method="post">
+                                                <form class="form-horizontal form-material" name="formtovalidate" onsubmit="return validateForm()" action="/users/profile/changepass" method="post">
                                                     <div class="form-group">
                                                         <label for="inputPassword" class="control-label">Old Password</label>
                                                         <input onkeyup="validateOld()" type="password" data-minlength="8" maxlength="50"class="form-control" id="oldinputPassword" placeholder="Example: Abcd_1234" name="oldpassword">
@@ -130,7 +130,7 @@
                                                     
                                                     <div class="form-group">
                                                         <label for="inputPassword" class="control-label">New Password</label>
-                                                        <input onkeyup="validate()" type="New password" data-minlength="8" maxlength="50"class="form-control" id="inputPassword" placeholder="Example: Abcd_1234">
+                                                        <input onkeyup="validate()" type="password" data-minlength="8" maxlength="50"class="form-control" id="inputPassword" placeholder="Example: Abcd_1234" name="newpassword">
                                                         <div class="help-block" id = "passval"></div>
                                                         <div class="help-block" id = "passval2"></div>
                                                         <div class="help-block" id = "passval3"></div>
@@ -139,8 +139,8 @@
                                                     
                                                     <div class="form-group">
                                                         <label for="inputPassword" class="control-label">Password Confirm</label>
-                                                        <input onkeyup="validate()" type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Passwords don't match" placeholder="Confirm" name="password">
-                                                        <div class="help-block with-errors" id = "passconfirmation"></div>
+                                                        <input onkeyup="validate()" type="password" class="form-control" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Passwords don't match" placeholder="Confirm" name="confirmpassword">
+                                                        <div class="help-block with-errors" id="passconfirmation"></div>
                                                     </div>
                                                     
                                                     <div class="form-group">

@@ -7,6 +7,14 @@ const dbconfig = require("../config/database");
 const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
 
+const multipart = require("connect-multiparty");
+const multipartMiddleware = multipart();
+const fs = require("fs");
+const path = require("path");
+const express = require("express");
+const app = express();
+app.use(express.static(path.join(__dirname, "public")));
+
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
@@ -379,9 +387,248 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:PROFILE
 	// =====================================
+
 	app.get("/users/profile", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/profile", {
-			user: req.user // get the user out of session and pass to template
+		var selectQuery =
+			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
+		connection.query(selectQuery, [req.user.id], function(
+			err,
+			rows
+		) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			console.log(rows);
+			if(rows.length===0) {
+				dataShow = {
+					docId: "",
+					fname: "",
+					lname: "",
+					profileName: "Name",
+					profilePic: "defaultprofile.png"
+				};
+			}
+			else {
+				dataShow = {
+					docId: rows[0].documentNum,
+					fname: rows[0].fname,
+					lname: rows[0].lname,
+					profileName: rows[0].fname,
+					profilePic: rows[0].profilePicture
+				};
+				if(rows[0].fname===null) {
+					dataShow.profileName = "Name";
+				}
+				if(rows[0].profilePicture===null) {
+					dataShow.profilePic = "defaultprofile.png";
+				}
+			}		
+
+			res.render("./user/dashboard/profile", {
+				user: req.user, // get the user out of session and pass to template
+				docId: dataShow.docId,
+				fname: dataShow.fname,
+				lname: dataShow.lname,
+				profilePic: dataShow.profilePic,
+				email: req.user.username, 
+				profileName: dataShow.profileName,
+			});
+		});
+	});
+
+	// =====================================
+	// SECTION:PROFILE
+	// =====================================
+	app.post("/users/profile", isLoggedIn, multipartMiddleware, function(req, res) {
+		idUser = req.body.iduser;
+		nameUser = req.body.fname;
+		lnameUser = req.body.lname;
+		profilePic = null; //por defecto la ruta de la imagen es null
+
+		var oldpath = req.files.picture.path;
+		var extension = req.files.picture.name.split(".").pop();
+		var newpath = __dirname+"/../public/img/users/"+req.user.id+path.extname(oldpath).toLowerCase();
+		
+		
+		if (extension==="jpg" || extension==="png") {
+			fs.readFile(oldpath, function(err, dataImg) {
+				if(err) {
+					console.log(`Error uploading picture: ${err}`);
+				} else {
+					fs.writeFile(newpath, dataImg, function(err) {
+						if(err) {
+							console.log(`Error saving picture upload: ${err}`);
+						} else {
+							//guardar ruta de la imagen
+							profilePic = "users/"+req.user.id+path.extname(oldpath).toLowerCase();
+						}
+					});	
+				}
+			});
+		}
+
+		var selectQuery =
+			"SELECT id_profile, id, fname, lname, documentNum FROM profile WHERE profile.id=?;";
+		connection.query(selectQuery, [req.user.id], function(
+			err,
+			rows
+		) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+
+			if (rows.length > 0) {
+				//actualizar perfil en la BD
+				var updateQuery =
+					"UPDATE profile SET fname=?, lname=?, documentNum=?, profilePicture=? WHERE id=?;";
+				connection.query(
+					updateQuery,
+					[
+						nameUser,
+						lnameUser,
+						idUser,
+						profilePic,
+						req.user.id
+					],
+					function(err, rows) {
+						if (err) {
+							condole.log("Error profile update");
+							throw err;
+						}
+					}
+				);
+			} else {
+				//insertar perfil en la BD
+				var insertQuery =
+					"INSERT INTO profile (id, fname, lname, documentNum, profilePicture) VALUES (?,?,?,?,?);";
+				connection.query(
+					insertQuery,
+					[
+						req.user.id,
+						nameUser,
+						lnameUser,
+						idUser,
+						profilePic
+					],
+					function(err, rows) {
+						if (err) {
+							console.log("Error profile insert");
+							throw err;
+						}
+					}
+				);
+			}
+		});
+
+		// recuperar datos guardados del perfil para renderizar
+		data = {};
+		var selectQuery =
+			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
+		connection.query(selectQuery, [req.user.id], function(
+			err,
+			rows
+		) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+
+			if(rows.length===0) {
+				dataShow = {
+					docId: "",
+					fname: "",
+					lname: "",
+					profileName: "Name",
+					profilePic: "defaultprofile.png"
+				};
+			}
+			else {
+				dataShow = {
+					docId: rows[0].documentNum,
+					fname: rows[0].fname,
+					lname: rows[0].lname,
+					profileName: rows[0].fname,
+					profilePic: rows[0].profilePicture
+				};
+				if(rows[0].fname===null) {
+					dataShow.profileName = "Name";
+				}
+				if(rows[0].profilePicture===null) {
+					dataShow.profilePic = "defaultprofile.png";
+				}
+			}		
+
+			res.render("./user/dashboard/profile", {
+				user: req.user, // get the user out of session and pass to template
+				docId: dataShow.docId,
+				fname: dataShow.fname,
+				lname: dataShow.lname,
+				profilePic: dataShow.profilePic,
+				email: req.user.username, 
+				profileName: dataShow.profileName,
+			});
+		});
+	});
+
+	// =====================================
+	// SECTION:PROFILE
+	// =====================================
+
+	app.post("/users/profile/changepass", isLoggedIn, function(req, res) {
+		data = {
+			oldPass: req.body.oldpassword,
+			newPass: req.body.newpassword,
+			confirmPass: req.body.confirmpassword,
+		};
+
+		// recuperar datos guardados del perfil para renderizar
+		var selectQuery =
+			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
+		connection.query(selectQuery, [req.user.id], function(
+			err,
+			rows
+		) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			console.log(rows);
+			if(rows.length===0) {
+				dataShow = {
+					docId: "",
+					fname: "",
+					lname: "",
+					profileName: "Name",
+					profilePic: "defaultprofile.png"
+				};
+			}
+			else {
+				dataShow = {
+					docId: rows[0].documentNum,
+					fname: rows[0].fname,
+					lname: rows[0].lname,
+					profileName: rows[0].fname,
+					profilePic: rows[0].profilePicture
+				};
+				if(rows[0].fname===null) {
+					dataShow.profileName = "Name";
+				}
+				if(rows[0].profilePicture===null) {
+					dataShow.profilePic = "defaultprofile.png";
+				}
+			}		
+
+			res.render("./user/dashboard/profile", {
+				user: req.user, // get the user out of session and pass to template
+				docId: dataShow.docId,
+				fname: dataShow.fname,
+				lname: dataShow.lname,
+				profilePic: dataShow.profilePic,
+				email: req.user.username, 
+				profileName: dataShow.profileName,
+			});
 		});
 	});
 
