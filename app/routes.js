@@ -101,8 +101,7 @@ module.exports = function(app, passport) {
 		var id_persona = 98765;
 		var bank_name = "BBVA";
 		var pin_password = 8888;
-		var vdata = {};
-
+		
 		console.log("* Enviado por usuario"); //debug
 		console.log(req.body); //debug
 		console.log("##############"); //debug
@@ -116,27 +115,13 @@ module.exports = function(app, passport) {
 		console.log("* URL Base"); //debug
 		console.log(uribase); //debug
 		//search for user accounts of every type
-
-		request(
-			{
-				method: "GET",
-				uri: uribase,
-				gzip: true
-			},
-			function(error, response, body) {
-				console.log("the decoded data is: " + body); //debug
-				vdata = body;
-				console.log(vdata);
-				res.render("./user/dashboard/select_accounts", {
-					//add more logic here!
-					user: req.user, // get the user out of session and pass to template
-					title: "Select Accounts",
-					results: vdata
-				});
-			}
-		);
-
-		console.log("Yay");
+		request(uribase, function(error, response, body) {        
+        	var data =JSON.parse(body, true)
+        	console.log(data.account[0])       
+        	res.render("./user/dashboard/select_accounts", 
+        		{title:'lol',x:data.account
+        	});
+    });	
 	});
 
 	app.get("/users/dashboard/accounts/credit", isLoggedIn, function(req, res) {
