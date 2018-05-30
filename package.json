@@ -23,6 +23,7 @@
     "passport-local": "^1.0.0",
     "path": "^0.12.7",
     "pm2": "^2.10.4",
-    "request": "^2.87.0"
+    "request": "^2.87.0",
+    "request-promise": "^4.2.2"
   }
 }

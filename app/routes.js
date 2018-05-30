@@ -3,6 +3,7 @@ const request = require("request");
 const crypto = require("crypto");
 const async = require("async");
 const nodemailer = require("nodemailer");
+var bcrypt = require("bcrypt-nodejs");
 const dbconfig = require("../config/database");
 const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
@@ -77,14 +78,19 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
-
+	// =====================================
+	// SECTION:ACCOUNT
+	// =====================================
 	app.get("/users/dashboard/account", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/", {
 			//add more logic here!
 			user: req.user // get the user out of session and pass to template
 		});
 	});
-
+	
+	// =====================================
+	// SECTION:ADD ACCOUNT
+	// =====================================
 	app.get("/users/dashboard/add_account", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/addbank", {
 			//add more logic here!
@@ -95,13 +101,9 @@ module.exports = function(app, passport) {
 
 	app.post("/users/dashboard/sync_bank", isLoggedIn, function(req, res) {
 		//user details submitted
-		/*var id_persona = req.body.idUser;
+		var id_persona = req.body.idUser;
 		var bank_name = req.body.bank;
-		var pin_password = req.body.pin_password;*/
-		var id_persona = 98765;
-		var bank_name = "BBVA";
-		var pin_password = 8888;
-		
+		var pin_password = req.body.pin_password;
 		console.log("* Enviado por usuario"); //debug
 		console.log(req.body); //debug
 		console.log("##############"); //debug
@@ -118,16 +120,17 @@ module.exports = function(app, passport) {
 		request(uribase, function(error, response, body) {        
         	var data =JSON.parse(body, true)
         	console.log(data.account[0])       
-        	res.render("./user/dashboard/select_accounts", 
-        		{title:'lol',x:data.account
+        	res.render("./user/dashboard/dumy", 
+        		{title:'Sync Account',results:data.account
         	});
-    });	
-	});
+    	});	
 
+	});
+	
+	// =====================================
+	// SECTION:CREDIT
+	// =====================================
 	app.get("/users/dashboard/accounts/credit", isLoggedIn, function(req, res) {
-		//obtenemos datos asociados al usuario, solo cuentas de credito.
-		//bank.id_bank:int, user.id : int, account
-		data = {};
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "credit"], function(
@@ -138,24 +141,32 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			data.id = rows;
-			//console.log(rows);
+			console.log('#######################')
+			console.log(rows);
+			balance =[]
+			for(let i= 0; i<rows.length;i++){
+				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
+				request(uribase, function(error, response, body) {        
+        		balance.push(body);
+        		console.log(balance)
+				});
+			}	
 
-			res.render("./user/dashboard/credit", {
+			console.log(balance)
+			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Credit Accounts"
-			});
+				title: "Credit Accounts",
+				data : rows, 
+				b: balance.length
+			};)
 		});
 	});
 
-	app.get("/users/dashboard/accounts/current", isLoggedIn, function(
-		req,
-		res
-	) {
-		//obtenemos datos asociados al usuario, solo cuentas de credito.
-		//bank.id_bank:int, user.id : int, account
-		data = {};
+	// =====================================
+	// SECTION:CURRENT
+	// =====================================
+	app.get("/users/dashboard/accounts/current", isLoggedIn, function(req, res) {
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "current"], function(
@@ -163,27 +174,36 @@ module.exports = function(app, passport) {
 			rows
 		) {
 			if (err) {
-				console.log("Wrong Query in Saving Database");
+				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			data.id = rows;
-			//console.log(rows);
+			console.log('#######################')
+			console.log(rows);
+			balance =[]
+			for(let i= 0; i<rows.length;i++){
+				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
+				request(uribase, function(error, response, body) {        
+        		balance.push(body);
+        		console.log(balance)
+				});
+			}	
 
-			res.render("./user/dashboard/current", {
+			console.log(balance)
+			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Credit Accounts"
-			});
+				title: "Current Accounts",
+				data : rows, 
+				b: balance.length
+			};)
 		});
 	});
 
-	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(
-		req,
-		res
-	) {
-		//obtenemos datos asociados al usuario, solo cuentas de credito.
-		//bank.id_bank:int, user.id : int, account
-		data = {};
+
+	// =====================================
+	// SECTION:SAVING
+	// =====================================
+	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(req, res) {
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "saving"], function(
@@ -191,45 +211,31 @@ module.exports = function(app, passport) {
 			rows
 		) {
 			if (err) {
-				console.log("Wrong Query in Saving Database");
+				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			data.id = rows;
-			//console.log(rows);
-			res.render("./user/dashboard/savings", {
+			console.log('#######################')
+			console.log(rows);
+			balance =[]
+			for(let i= 0; i<rows.length;i++){
+				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
+				request(uribase, function(error, response, body) {        
+        		balance.push(body);
+        		console.log(balance)
+				});
+			}	
+
+			console.log(balance)
+			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Credit Accounts"
-			});
+				title: "Current Accounts",
+				data : rows, 
+				b: balance.length
+			};)
 		});
 	});
 
-	app.get("/users/dashboard/accounts/current", isLoggedIn, function(
-		req,
-		res
-	) {
-		//obtenemos datos asociados al usuario, solo cuentas de credito.
-		//bank.id_bank:int, user.id : int, account
-		data = {};
-		var selectQuery =
-			"SELECT name_bank, number_acc FROM account, bank, user WHERE user.id=? AND user.id=account.id AND account.type_acc=?;";
-		connection.query(selectQuery, [req.user.id, "saving"], function(
-			err,
-			rows
-		) {
-			if (err) {
-				console.log("Wrong Query in Current Database");
-				throw err;
-			}
-			data.id = rows;
-			//console.log(rows);
-			res.render("./user/dashboard/credit", {
-				//add more logic here!
-				user: req.user, // get the user out of session and pass to template
-				title: "Current Accounts"
-			});
-		});
-	});
 
 	// =====================================
 	// SECTION:PROFILE
@@ -317,6 +323,7 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
 	//NO IMPLEMENTADO
 	// =====================================
 	// SECTION:GROUP ACCOUNTS
@@ -343,12 +350,12 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:SHOW BUDGET
 	// =====================================
-
 	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/budget", {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
 	//NO IMPLEMENTADO
 	// =====================================
 	// SECTION:SHOW GROUP
@@ -362,7 +369,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:GROUP ACCOUNTS
 	// =====================================
-
 	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/group_accounts", {
 			user: req.user // get the user out of session and pass to template
@@ -372,7 +378,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:PROFILE
 	// =====================================
-
 	app.get("/users/profile", isLoggedIn, function(req, res) {
 		var selectQuery =
 			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
@@ -558,7 +563,7 @@ module.exports = function(app, passport) {
 	});
 
 	// =====================================
-	// SECTION:PROFILE
+	// SECTION:PROFILE CHANGE PASS
 	// =====================================
 
 	app.post("/users/profile/changepass", isLoggedIn, function(req, res) {
@@ -568,6 +573,9 @@ module.exports = function(app, passport) {
 			confirmPass: req.body.confirmpassword,
 		};
 
+		//password: bcrypt.hashSync(password, null, null) // use the generateHash function in our user model
+		console.log(req.user)
+		console.log(data)
 		// recuperar datos guardados del perfil para renderizar
 		var selectQuery =
 			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
@@ -652,6 +660,7 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
 	// =====================================
 	// SECTION:ABOUT
 	// =====================================
@@ -669,7 +678,9 @@ module.exports = function(app, passport) {
 		res.redirect("/users/login");
 	});
 };
-
+// =====================================
+// HELPER:Find Email Address Db
+// =====================================
 function searchEmail(email) {
 	console.log("Dentro de funcion buscaemail");
 	console.log(email);
@@ -681,7 +692,9 @@ function searchEmail(email) {
 		}
 	});
 }
-
+// =====================================
+// HELPER:Find Email Address Db
+// =====================================
 function saveToken(token) {
 	return;
 }
