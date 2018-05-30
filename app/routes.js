@@ -159,7 +159,7 @@ module.exports = function(app, passport) {
 				title: "Credit Accounts",
 				data : rows, 
 				b: balance.length
-			};)
+			});
 		});
 	});
 
@@ -195,7 +195,7 @@ module.exports = function(app, passport) {
 				title: "Current Accounts",
 				data : rows, 
 				b: balance.length
-			};)
+			});
 		});
 	});
 
@@ -232,7 +232,7 @@ module.exports = function(app, passport) {
 				title: "Current Accounts",
 				data : rows, 
 				b: balance.length
-			};)
+			});
 		});
 	});
 
