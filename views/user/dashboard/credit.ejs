@@ -7,7 +7,7 @@
     <!-- Preloader - style you can find in spinners.css -->
     <div class="preloader">
         <svg class="circular" viewBox="25 25 50 50">
-			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
     </div>
 
     <!-- Main wrapper  -->
@@ -30,7 +30,7 @@
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                        <li class="breadcrumb-item active">Credit</li>
+                        <li class="breadcrumb-item active"><%= dump%></li>
                     </ol>
                 </div>
             </div>
@@ -38,7 +38,6 @@
             <!-- End Bread crumb -->
             <!-- Container fluid  -->
             <div class="container-fluid">
-    
                 <!-- Start Page Content -->
                 <div class="card-body">
                     <div class="login-form">
@@ -50,13 +49,16 @@
                                     <th>Balance</th>
                                     <th>Delete</th>
                                 </tr>
-                                <!--De Api-->
+                                <% for(let i = 0; i < data.length; i++) { %>
                                 <tr>
-                                    <td>xxxxx</td>
-                                    <td>xxxxx</td>
-                                    <td>xxxxx</td>
+                                    <td><%=data[i].number_acc%></td>
+                                    <td><%=data[i].name_bank%></td>
+                                    <td><%=balances[i]%></td>
+                                    
                                     <td><button class="btn btn-primary btn-flat" onclick="deleteAcc()">Delete</button></td>
                                 </tr>
+                                <% } %>
+                                
                                 <!--!!-->
                             </table>
                         </div>

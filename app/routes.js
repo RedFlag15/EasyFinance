@@ -138,11 +138,8 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log("#######################");
-			console.log(rows);
 			var urilist = [];
 			var balance = [];
-
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
@@ -151,17 +148,15 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
-
-			console.log(urilist);
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				console.log(resc.getBody("utf-8"));
 				balance.push(resc.getBody("utf-8"));
 			}
-			console.log(balance);
-			res.render("./user/dashboard/dumy", {
+			res.render("./user/dashboard/credit", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
+				dump: "Credit",
 				title: "Credit Accounts",
 				data: rows,
 				balances: balance
@@ -169,6 +164,12 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.post("/users/dashboard/accounts/credit/delete", isLoggedIn, function(
+		req,
+		res
+	) {
+		console.log(req.body);
+	});
 	// =====================================
 	// SECTION:CURRENT
 	// =====================================
@@ -186,11 +187,8 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log("#######################");
-			console.log(rows);
 			var urilist = [];
 			var balance = [];
-
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
@@ -199,18 +197,16 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
-
-			console.log(urilist);
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				console.log(resc.getBody("utf-8"));
 				balance.push(resc.getBody("utf-8"));
 			}
-			console.log(balance);
-			res.render("./user/dashboard/dumy", {
+			res.render("./user/dashboard/current", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Credit Accounts",
+				dump: "Current",
+				title: "Current Accounts",
 				data: rows,
 				balances: balance
 			});
@@ -234,11 +230,8 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log("#######################");
-			console.log(rows);
 			var urilist = [];
 			var balance = [];
-
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
@@ -247,18 +240,16 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
-
-			console.log(urilist);
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				console.log(resc.getBody("utf-8"));
 				balance.push(resc.getBody("utf-8"));
 			}
-			console.log(balance);
-			res.render("./user/dashboard/dumy", {
+			res.render("./user/dashboard/savings", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Credit Accounts",
+				dump: "Savings",
+				title: "Savings Accounts",
 				data: rows,
 				balances: balance
 			});
@@ -272,7 +263,8 @@ module.exports = function(app, passport) {
 		res.render("./user/recover_password", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
-			title: "Password"
+			title: "Password",
+			message: ""
 		});
 	});
 
@@ -337,7 +329,16 @@ module.exports = function(app, passport) {
 			],
 			function(err) {
 				if (err) return next(err);
-				res.redirect("/users/password_recovery");
+				req.flash(
+					"emailSent",
+					"If the email address is in our database, We've sent you an email address with a reset link"
+				);
+				res.render("./user/recover_password", {
+					//add more logic here!
+					user: req.user, // get the user out of session and pass to template
+					title: "Password",
+					message: req.flash("emailSent")
+				});
 			}
 		);
 	});
@@ -380,7 +381,8 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/budget", {
-			user: req.user // get the user out of session and pass to template
+			user: req.user, // get the user out of session and pass to template
+			dump: "Budgets"
 		});
 	});
 
