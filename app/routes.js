@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const request = require("request");
+var requests = require("sync-request"); //testing
 const crypto = require("crypto");
 const async = require("async");
 const nodemailer = require("nodemailer");
@@ -87,7 +88,7 @@ module.exports = function(app, passport) {
 			user: req.user // get the user out of session and pass to template
 		});
 	});
-	
+
 	// =====================================
 	// SECTION:ADD ACCOUNT
 	// =====================================
@@ -117,16 +118,16 @@ module.exports = function(app, passport) {
 		console.log("* URL Base"); //debug
 		console.log(uribase); //debug
 		//search for user accounts of every type
-		request(uribase, function(error, response, body) {        
-        	var data =JSON.parse(body, true)
-        	console.log(data.account[0])       
-        	res.render("./user/dashboard/dumy", 
-        		{title:'Sync Account',results:data.account
-        	});
-    	});	
-
+		request(uribase, function(error, response, body) {
+			var data = JSON.parse(body, true);
+			console.log(data.account[0]);
+			res.render("./user/dashboard/dumy", {
+				title: "Sync Account",
+				results: data.account
+			});
+		});
 	});
-	
+
 	// =====================================
 	// SECTION:CREDIT
 	// =====================================
@@ -141,24 +142,33 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log('#######################')
+			console.log("#######################");
 			console.log(rows);
-			balance =[]
-			for(let i= 0; i<rows.length;i++){
-				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
-				request(uribase, function(error, response, body) {        
-        		balance.push(body);
-        		console.log(balance)
-				});
-			}	
+			var urilist = [];
+			var balance = [];
 
-			console.log(balance)
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					req.user.id +
+					"/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+			}
+
+			console.log(urilist);
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				console.log(resc.getBody("utf-8"));
+				balance.push(resc.getBody("utf-8"));
+			}
+			console.log(balance);
 			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
 				title: "Credit Accounts",
-				data : rows, 
-				b: balance.length
+				data: rows,
+				balances: balance
 			});
 		});
 	});
@@ -166,7 +176,10 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:CURRENT
 	// =====================================
-	app.get("/users/dashboard/accounts/current", isLoggedIn, function(req, res) {
+	app.get("/users/dashboard/accounts/current", isLoggedIn, function(
+		req,
+		res
+	) {
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "current"], function(
@@ -177,33 +190,44 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log('#######################')
+			console.log("#######################");
 			console.log(rows);
-			balance =[]
-			for(let i= 0; i<rows.length;i++){
-				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
-				request(uribase, function(error, response, body) {        
-        		balance.push(body);
-        		console.log(balance)
-				});
-			}	
+			var urilist = [];
+			var balance = [];
 
-			console.log(balance)
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					req.user.id +
+					"/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+			}
+
+			console.log(urilist);
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				console.log(resc.getBody("utf-8"));
+				balance.push(resc.getBody("utf-8"));
+			}
+			console.log(balance);
 			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Current Accounts",
-				data : rows, 
-				b: balance.length
+				title: "Credit Accounts",
+				data: rows,
+				balances: balance
 			});
 		});
 	});
 
-
 	// =====================================
 	// SECTION:SAVING
 	// =====================================
-	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(req, res) {
+	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(
+		req,
+		res
+	) {
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "saving"], function(
@@ -214,28 +238,36 @@ module.exports = function(app, passport) {
 				console.log("Wrong Query in Credit Database");
 				throw err;
 			}
-			console.log('#######################')
+			console.log("#######################");
 			console.log(rows);
-			balance =[]
-			for(let i= 0; i<rows.length;i++){
-				var uribase ="http://apibank.herokuapp.com/balance/"+req.user.id+'/'+rows[i].number_acc;
-				request(uribase, function(error, response, body) {        
-        		balance.push(body);
-        		console.log(balance)
-				});
-			}	
+			var urilist = [];
+			var balance = [];
 
-			console.log(balance)
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					req.user.id +
+					"/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+			}
+
+			console.log(urilist);
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				console.log(resc.getBody("utf-8"));
+				balance.push(resc.getBody("utf-8"));
+			}
+			console.log(balance);
 			res.render("./user/dashboard/dumy", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				title: "Current Accounts",
-				data : rows, 
-				b: balance.length
+				title: "Credit Accounts",
+				data: rows,
+				balances: balance
 			});
 		});
 	});
-
 
 	// =====================================
 	// SECTION:PROFILE
@@ -381,16 +413,13 @@ module.exports = function(app, passport) {
 	app.get("/users/profile", isLoggedIn, function(req, res) {
 		var selectQuery =
 			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
-		connection.query(selectQuery, [req.user.id], function(
-			err,
-			rows
-		) {
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
 			}
 			console.log(rows);
-			if(rows.length===0) {
+			if (rows.length === 0) {
 				dataShow = {
 					docId: "",
 					fname: "",
@@ -398,8 +427,7 @@ module.exports = function(app, passport) {
 					profileName: "Name",
 					profilePic: "defaultprofile.png"
 				};
-			}
-			else {
+			} else {
 				dataShow = {
 					docId: rows[0].documentNum,
 					fname: rows[0].fname,
@@ -407,13 +435,13 @@ module.exports = function(app, passport) {
 					profileName: rows[0].fname,
 					profilePic: rows[0].profilePicture
 				};
-				if(rows[0].fname===null) {
+				if (rows[0].fname === null) {
 					dataShow.profileName = "Name";
 				}
-				if(rows[0].profilePicture===null) {
+				if (rows[0].profilePicture === null) {
 					dataShow.profilePic = "defaultprofile.png";
 				}
-			}		
+			}
 
 			res.render("./user/dashboard/profile", {
 				user: req.user, // get the user out of session and pass to template
@@ -421,8 +449,8 @@ module.exports = function(app, passport) {
 				fname: dataShow.fname,
 				lname: dataShow.lname,
 				profilePic: dataShow.profilePic,
-				email: req.user.username, 
-				profileName: dataShow.profileName,
+				email: req.user.username,
+				profileName: dataShow.profileName
 			});
 		});
 	});
@@ -430,7 +458,10 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:PROFILE
 	// =====================================
-	app.post("/users/profile", isLoggedIn, multipartMiddleware, function(req, res) {
+	app.post("/users/profile", isLoggedIn, multipartMiddleware, function(
+		req,
+		res
+	) {
 		idUser = req.body.iduser;
 		nameUser = req.body.fname;
 		lnameUser = req.body.lname;
@@ -438,32 +469,35 @@ module.exports = function(app, passport) {
 
 		var oldpath = req.files.picture.path;
 		var extension = req.files.picture.name.split(".").pop();
-		var newpath = __dirname+"/../public/img/users/"+req.user.id+path.extname(oldpath).toLowerCase();
-		
-		
-		if (extension==="jpg" || extension==="png") {
+		var newpath =
+			__dirname +
+			"/../public/img/users/" +
+			req.user.id +
+			path.extname(oldpath).toLowerCase();
+
+		if (extension === "jpg" || extension === "png") {
 			fs.readFile(oldpath, function(err, dataImg) {
-				if(err) {
+				if (err) {
 					console.log(`Error uploading picture: ${err}`);
 				} else {
 					fs.writeFile(newpath, dataImg, function(err) {
-						if(err) {
+						if (err) {
 							console.log(`Error saving picture upload: ${err}`);
 						} else {
 							//guardar ruta de la imagen
-							profilePic = "users/"+req.user.id+path.extname(oldpath).toLowerCase();
+							profilePic =
+								"users/" +
+								req.user.id +
+								path.extname(oldpath).toLowerCase();
 						}
-					});	
+					});
 				}
 			});
 		}
 
 		var selectQuery =
 			"SELECT id_profile, id, fname, lname, documentNum FROM profile WHERE profile.id=?;";
-		connection.query(selectQuery, [req.user.id], function(
-			err,
-			rows
-		) {
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
@@ -475,13 +509,7 @@ module.exports = function(app, passport) {
 					"UPDATE profile SET fname=?, lname=?, documentNum=?, profilePicture=? WHERE id=?;";
 				connection.query(
 					updateQuery,
-					[
-						nameUser,
-						lnameUser,
-						idUser,
-						profilePic,
-						req.user.id
-					],
+					[nameUser, lnameUser, idUser, profilePic, req.user.id],
 					function(err, rows) {
 						if (err) {
 							condole.log("Error profile update");
@@ -495,13 +523,7 @@ module.exports = function(app, passport) {
 					"INSERT INTO profile (id, fname, lname, documentNum, profilePicture) VALUES (?,?,?,?,?);";
 				connection.query(
 					insertQuery,
-					[
-						req.user.id,
-						nameUser,
-						lnameUser,
-						idUser,
-						profilePic
-					],
+					[req.user.id, nameUser, lnameUser, idUser, profilePic],
 					function(err, rows) {
 						if (err) {
 							console.log("Error profile insert");
@@ -516,16 +538,13 @@ module.exports = function(app, passport) {
 		data = {};
 		var selectQuery =
 			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
-		connection.query(selectQuery, [req.user.id], function(
-			err,
-			rows
-		) {
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
 			}
 
-			if(rows.length===0) {
+			if (rows.length === 0) {
 				dataShow = {
 					docId: "",
 					fname: "",
@@ -533,8 +552,7 @@ module.exports = function(app, passport) {
 					profileName: "Name",
 					profilePic: "defaultprofile.png"
 				};
-			}
-			else {
+			} else {
 				dataShow = {
 					docId: rows[0].documentNum,
 					fname: rows[0].fname,
@@ -542,13 +560,13 @@ module.exports = function(app, passport) {
 					profileName: rows[0].fname,
 					profilePic: rows[0].profilePicture
 				};
-				if(rows[0].fname===null) {
+				if (rows[0].fname === null) {
 					dataShow.profileName = "Name";
 				}
-				if(rows[0].profilePicture===null) {
+				if (rows[0].profilePicture === null) {
 					dataShow.profilePic = "defaultprofile.png";
 				}
-			}		
+			}
 
 			res.render("./user/dashboard/profile", {
 				user: req.user, // get the user out of session and pass to template
@@ -556,8 +574,8 @@ module.exports = function(app, passport) {
 				fname: dataShow.fname,
 				lname: dataShow.lname,
 				profilePic: dataShow.profilePic,
-				email: req.user.username, 
-				profileName: dataShow.profileName,
+				email: req.user.username,
+				profileName: dataShow.profileName
 			});
 		});
 	});
@@ -570,25 +588,22 @@ module.exports = function(app, passport) {
 		data = {
 			oldPass: req.body.oldpassword,
 			newPass: req.body.newpassword,
-			confirmPass: req.body.confirmpassword,
+			confirmPass: req.body.confirmpassword
 		};
 
 		//password: bcrypt.hashSync(password, null, null) // use the generateHash function in our user model
-		console.log(req.user)
-		console.log(data)
+		console.log(req.user);
+		console.log(data);
 		// recuperar datos guardados del perfil para renderizar
 		var selectQuery =
 			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
-		connection.query(selectQuery, [req.user.id], function(
-			err,
-			rows
-		) {
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
 			}
 			console.log(rows);
-			if(rows.length===0) {
+			if (rows.length === 0) {
 				dataShow = {
 					docId: "",
 					fname: "",
@@ -596,8 +611,7 @@ module.exports = function(app, passport) {
 					profileName: "Name",
 					profilePic: "defaultprofile.png"
 				};
-			}
-			else {
+			} else {
 				dataShow = {
 					docId: rows[0].documentNum,
 					fname: rows[0].fname,
@@ -605,13 +619,13 @@ module.exports = function(app, passport) {
 					profileName: rows[0].fname,
 					profilePic: rows[0].profilePicture
 				};
-				if(rows[0].fname===null) {
+				if (rows[0].fname === null) {
 					dataShow.profileName = "Name";
 				}
-				if(rows[0].profilePicture===null) {
+				if (rows[0].profilePicture === null) {
 					dataShow.profilePic = "defaultprofile.png";
 				}
-			}		
+			}
 
 			res.render("./user/dashboard/profile", {
 				user: req.user, // get the user out of session and pass to template
@@ -619,8 +633,8 @@ module.exports = function(app, passport) {
 				fname: dataShow.fname,
 				lname: dataShow.lname,
 				profilePic: dataShow.profilePic,
-				email: req.user.username, 
-				profileName: dataShow.profileName,
+				email: req.user.username,
+				profileName: dataShow.profileName
 			});
 		});
 	});
