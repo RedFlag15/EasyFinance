@@ -33,6 +33,12 @@
                 <div class="card-body">
                     <div class="login-form">
                         <h2 class="control-label">Select to Sync your Accounts</h4>
+                            <% for(let i = 0; i < results.length; i++) { %>
+                            <tr>
+                                <td><%=results[i].bankAcc%></td>
+                                <td><%=results[i].balanceAcc%></td>
+                            </tr>
+                            <% } %>
                         <form>
                             <label class="control-label">Credit Accounts</label>
                             <div class="form-group">

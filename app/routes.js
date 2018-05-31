@@ -115,16 +115,12 @@ module.exports = function(app, passport) {
 			bank_name +
 			"/" +
 			pin_password;
-		console.log("* URL Base"); //debug
-		console.log(uribase); //debug
-		//search for user accounts of every type
-		request(uribase, function(error, response, body) {
-			var data = JSON.parse(body, true);
-			console.log(data.account[0]);
-			res.render("./user/dashboard/dumy", {
-				title: "Sync Account",
-				results: data.account
-			});
+		var resc = requests("GET", uribase);
+		data = JSON.parse(resc.getBody("utf-8"), true);
+		console.log(resc.getBody("utf-8"));
+		res.render("./user/dashboard/select_accounts", {
+			title: "Sync Account",
+			results: data.account
 		});
 	});
 
