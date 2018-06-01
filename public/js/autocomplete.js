@@ -4,10 +4,6 @@ function bankname(){
   document.getElementById("hiddenbank").value = name;
 }
 
-function deleteAcc(){
-  confirm("Are you sure you want to Delete this Account?");
-}
-
 var listBank = ["BANCOLOMBIA",
 "BANCO AGRARIO",
 "BANCO AV VILLAS ",

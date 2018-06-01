@@ -42,7 +42,7 @@
                 <div class="card-body">
                     <div class="login-form">
                         <div class="form-group">
-                            <table>
+                            <table id="accountTable">
                                 <tr>
                                     <th>Account</th>
                                     <th>Bank</th>
@@ -53,18 +53,17 @@
                                 <tr>
                                     <td><%=data[i].number_acc%></td>
                                     <td><%=data[i].name_bank%></td>
-                                    <td><%=balances[i]%></td>
-                                    
-                                    <td><button class="btn btn-primary btn-flat" onclick="deleteAcc()">Delete</button></td>
+                                    <td><%=balances[i]%></td>                                    
+                                    <td><button class="btn btn-primary btn-flat" onclick="deleteAcc(this)">Delete</button></td>
                                 </tr>
                                 <% } %>
-                                
                                 <!--!!-->
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+            <% include ./../../partials/dashboard/deleteform %>
             <!-- End Container fluid  -->
             <!-- footer -->
             <!-- End footer -->
