@@ -584,7 +584,7 @@ module.exports = function(app, passport) {
 			req.user.id +
 			path.extname(oldpath).toLowerCase();
 
-		if (extension === "jpg" || extension === "png") {
+		if (extension === "jpg" || extension === "jpeg" || extension === "png") {
 			fs.readFile(oldpath, function(err, dataImg) {
 				if (err) {
 					console.log(`Error uploading picture: ${err}`);
@@ -642,109 +642,46 @@ module.exports = function(app, passport) {
 				);
 			}
 		});
-
-		// recuperar datos guardados del perfil para renderizar
-		data = {};
-		var selectQuery =
-			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
-		connection.query(selectQuery, [req.user.id], function(err, rows) {
-			if (err) {
-				console.log("Wrong Query in Current Database");
-				throw err;
-			}
-
-			if (rows.length === 0) {
-				dataShow = {
-					docId: "",
-					fname: "",
-					lname: "",
-					profileName: "Name",
-					profilePic: "defaultprofile.png"
-				};
-			} else {
-				dataShow = {
-					docId: rows[0].documentNum,
-					fname: rows[0].fname,
-					lname: rows[0].lname,
-					profileName: rows[0].fname,
-					profilePic: rows[0].profilePicture
-				};
-				if (rows[0].fname === null) {
-					dataShow.profileName = "Name";
-				}
-				if (rows[0].profilePicture === null) {
-					dataShow.profilePic = "defaultprofile.png";
-				}
-			}
-
-			res.render("./user/dashboard/profile", {
-				user: req.user, // get the user out of session and pass to template
-				docId: dataShow.docId,
-				fname: dataShow.fname,
-				lname: dataShow.lname,
-				profilePic: dataShow.profilePic,
-				email: req.user.username,
-				profileName: dataShow.profileName
-			});
-		});
+		res.redirect("/users/profile");
 	});
 
 	// =====================================
 	// SECTION:PROFILE CHANGE PASS
 	// =====================================
-	app.post("/users/profile/changepass", isLoggedIn, function(req, res) {
+	app.post("/users/profile/changepass", isLoggedIn, function(req, res, next) {
 		data = {
 			oldPass: req.body.oldpassword,
 			newPass: req.body.newpassword,
 			confirmPass: req.body.confirmpassword
 		};
-
-		//password: bcrypt.hashSync(password, null, null) // use the generateHash function in our user model
-		console.log(req.user);
-		console.log(data);
-		// recuperar datos guardados del perfil para renderizar
-		var selectQuery =
-			"SELECT documentNum, fname, lname, username, profilePicture FROM profile, user WHERE profile.id=? AND profile.id=user.id;";
-		connection.query(selectQuery, [req.user.id], function(err, rows) {
-			if (err) {
+		var passQuery = 
+			"SELECT password FROM user WHERE id=?;";
+		connection.query(passQuery, [req.user.id], function(err, rows) {
+			if(err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
 			}
-			console.log(rows);
-			if (rows.length === 0) {
-				dataShow = {
-					docId: "",
-					fname: "",
-					lname: "",
-					profileName: "Name",
-					profilePic: "defaultprofile.png"
-				};
-			} else {
-				dataShow = {
-					docId: rows[0].documentNum,
-					fname: rows[0].fname,
-					lname: rows[0].lname,
-					profileName: rows[0].fname,
-					profilePic: rows[0].profilePicture
-				};
-				if (rows[0].fname === null) {
-					dataShow.profileName = "Name";
-				}
-				if (rows[0].profilePicture === null) {
-					dataShow.profilePic = "defaultprofile.png";
+
+			if(rows.length > 0) { 
+				if(bcrypt.compareSync(data.oldPass, rows[0].password)) {
+					var newPassCryp = bcrypt.hashSync(data.newPass, null, null);
+					updateQuery = "UPDATE user SET password=? WHERE id=?;";
+					connection.query(updateQuery, [newPassCryp, req.user.id], function(err, row) {
+						if(err) {
+							console.log("Wrong Query in Current Database");
+							throw err;
+						} else {
+							console.log("----Password Updated----");
+							//req.flash("UpdatedPass", "The password was updated");
+						}
+					});
+				} else {
+					console.log("----NotMatchPass----");
+					//req.flash("NotMatchPass", "The current password does not match");
 				}
 			}
-
-			res.render("./user/dashboard/profile", {
-				user: req.user, // get the user out of session and pass to template
-				docId: dataShow.docId,
-				fname: dataShow.fname,
-				lname: dataShow.lname,
-				profilePic: dataShow.profilePic,
-				email: req.user.username,
-				profileName: dataShow.profileName
-			});
 		});
+		res.redirect("/users/profile");
 	});
 
 	// =====================================
