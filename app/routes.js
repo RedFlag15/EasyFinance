@@ -3,6 +3,7 @@ const request = require("request");
 var requests = require("sync-request"); //testing
 const crypto = require("crypto");
 const async = require("async");
+var flash = require('express-flash');
 const nodemailer = require("nodemailer");
 var bcrypt = require("bcrypt-nodejs");
 const dbconfig = require("../config/database");
@@ -16,7 +17,6 @@ const path = require("path");
 const express = require("express");
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
-
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
@@ -127,6 +127,7 @@ module.exports = function(app, passport) {
 	app.post("/test",isLoggedIn,function(req,res){
 		console.log(req.body);
 	})
+
 	// =====================================
 	// SECTION:CREDIT
 	// =====================================
@@ -267,83 +268,181 @@ module.exports = function(app, passport) {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Password",
-			message: ""
+			message:""
+		});
+	});
+
+	//avoid the green bar!
+	app.get("/users/password_recovery_done", function(req, res) {
+		res.render("./user/recover_password2", {
+			//add more logic here!
+			user: req.user, // get the user out of session and pass to template
+			title: "Password",
+			message:req.flash("message")
 		});
 	});
 
 	app.post("/users/password_recovery", function(req, res, next) {
-		console.log(
-			"Email address request to recover password: " + req.body.email
-		);
-		console.log(req.body);
-		async.waterfall(
-			[
-				function(done) {
-					crypto.randomBytes(20, function(err, buf) {
-						var token = buf.toString("hex");
-						console.log(`Token Created: ${token}`);
-						done(err, token);
-					});
-				},
+		//Async magic happens here :) hfjs
+		async.waterfall([
+		    async.apply(searchEmail,req),
+		    createToken,
+		    storeToken,
+		    sendEmail,
+		], function (err, result) {			
+			if (err) return next(err);
+			res.redirect('/users/password_recovery_done');
+		});
+		
+		// =====================================
+		// HELPERS: PASSWORD RESET, THIS IS THE MY SAD CODE.
+		// =====================================
+		    
+		function searchEmail(email,callback) {
+		    console.log('Step 1');
+		    //var email ="hfjimenez@utp.edu.coxx";
+		    console.log(req.body);
+		    var email = req.body.email
+		    var queryEmail = "select * from user where username = ?";
+		    connection.query(queryEmail, [email], function(err, user){
+		        if(err){
+		            console.log('Error');
+		            throw err;
+		        }
+		        console.log(user)
+		        var resultEmail = user; 
+		        if(resultEmail.length>0){
+		          emailFound = user[0].username ;
+		        }
+		        else{
+					req.flash('message', 'No account with that email address exists.');
+		            emailFound="";
+		        }
+		        callback(null, emailFound);
+		    }); 
+		    
+		}
+		function createToken(email, callback) {
+		    console.log('Step 2');
+		    console.log("Generar Token");
+		    if(email!==""){
+		        console.log(email) 
+		        var  tmpToken = crypto.randomBytes(20).toString('hex');
+		        callback(null, tmpToken,email);
+		    }
+		    else{
+		    console.log('Booo no hay resultados,Token No se crea');
+		    // arg1 now equals 'one' and arg2 now equals 'two'
+		    callback(null, null,null);
+		    }
+		}
 
-				function(token, done) {
-					console.log("Using the token for search");
+		function storeToken(Token,email,callback) {
+		        console.log('Step 3');
+		        console.log('Store Token')
+		        console.log(Token);
+		        console.log(email);
+		        if(Token!==null && email!==null){
+		        	var updateTokenQuery = "UPDATE user SET Token=? where username=?"
+			        connection.query(updateTokenQuery, [Token, email],function(err,status){
+			            if(err){
+			                console.log('Impossible to update Token, Database Query Error');
+			                console.log(err);
+			                callback(null,false,Token, email);
+			            }
+			            else{
+			                console.log('Token Update Success');
+			                callback(null,true,Token, email);
+			            }
+			        });
 
-					//agregar una funcion que envie un true o false!
-					user = req.body.email;
-					console.log(token, user);
-					searchEmail();
-					console.log(req.body.email);
-					done(null, token, user);
-				},
-				function(token, user, done) {
-					//function(token, done) {
-					console.log("Sending Email :) to");
-					console.log(user);
-					var smtpTransport = nodemailer.createTransport(
-						"smtps://easyfinance.co@gmail.com:" +
-							encodeURIComponent("karminakoala2018") +
-							"@smtp.gmail.com:465"
-					);
-					var mailOptions = {
-						to: user,
-						from: "EasyFinance.co <easyfinance.co@gmail.com>",
-						subject: "Easyfinance.co Password Reset",
-						text:
-							"You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
-							"Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-							"http://" +
-							req.headers.host +
-							"/users/reset/" +
-							token +
-							"\n\n" +
-							"If you did not request this, please ignore this email and your password will remain unchanged.\nSecurity Team Easyfinance.co"
-					};
-					smtpTransport.sendMail(mailOptions, function(err) {
-						req.flash(
-							"info",
-							"An e-mail has been sent to " +
-								"hfjimenez@utp.edu.co" +
-								" with further instructions."
-						);
-						done(err, "done");
-					});
-				}
-			],
-			function(err) {
-				if (err) return next(err);
-				req.flash(
-					"emailSent",
-					"If the email address is in our database, We've sent you an email address with a reset link"
-				);
-				res.render("./user/recover_password", {
-					//add more logic here!
-					user: req.user, // get the user out of session and pass to template
-					title: "Password",
-					message: req.flash("emailSent")
-				});
-			}
-		);
+		        }
+		        else{
+		        	console.log('WTF No hay token generado...shit')
+		        	callback(null,false,Token, email);
+		        }		        
+		}
+
+		function sendEmail(flag, Token, email, callback) {
+		    console.log('Step 4');
+		    console.log(flag);
+		    if(flag){
+		        console.log("Sending Email :) to");
+		        console.log("*********");      
+		        var smtpTransport = nodemailer.createTransport(
+		                    	"smtps://easyfinance.co@gmail.com:" +
+		                        encodeURIComponent("karminakoala2018") +
+		                        "@smtp.gmail.com:465"
+		                );
+		        var mailOptions = {
+		                        to: email,
+		                        from: "EasyFinance.co <easyfinance.co@gmail.com>",
+		                        subject: "Easyfinance.co Password Reset",
+		                        text:
+		                            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+		                            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+		                            "http://" +
+		                            req.headers.host +
+		                            "/users/reset/" +
+		                            Token +
+		                            "\n\n" +
+		                            "If you did not request this, please ignore this email and your password will remain unchanged.\nSecurity Team Easyfinance.co"
+		        };
+		        smtpTransport.sendMail(mailOptions, function(err) {
+		                        req.flash(
+		                            "message",
+		                            "An e-mail has been sent to " +
+		                                email +
+		                                " with further instructions."
+		                        );                        
+		                        if(err){
+		                            console.log("NO SE PUDO ENVIAR EL EMAIL");
+		                        }
+		                        else{
+		                            console.log("Correo  Electronico enviado con instrucciones");
+		                        }
+		                        
+		        callback(null, 'done');
+		    })}
+		    else{
+		    	req.flash('error', 'Impossible to Send the email, Try again.');
+		        //Please try again and render or if we find an  email address with 
+		        console.log("Correo  Electronico NOOO enviado con instrucciones")
+		        callback(null, 'done');       
+		    }   
+		}
+	});
+	
+	// =====================================
+	// SECTION:Tokens Validations
+	// =====================================
+	app.get('/reset/:token', function(req, res) {
+		TokenQuery ="select * from user where Token=?;"
+    	connection.query(TokenQuery, [token], function(err, rows){
+	        if(err){
+	            console.log('There was a problem meanwhile doing the Query');
+	            req.flash("message","There was a problem while processing your request");
+	        }
+	        else if(rows === null || rows.length == 0){
+				console.log('Password reset token is invalid or has expired.');
+				return res.redirect('/users/password_recovery');
+	        }
+	        else {
+	        	res.render('reset', {user: req.user});
+	        }
+  		});
+
+	});
+
+	// =====================================
+	// SECTION:Reset new Password
+	// =====================================
+	app.get("/users/reset", function(req, res) {
+		res.render("./user/token_password", {
+			//add more logic here!
+			user: req.user, // get the user out of session and pass to template
+			title: "Reset Password"
+		});
 	});
 
 	// =====================================
@@ -584,7 +683,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:PROFILE CHANGE PASS
 	// =====================================
-
 	app.post("/users/profile/changepass", isLoggedIn, function(req, res) {
 		data = {
 			oldPass: req.body.oldpassword,
@@ -693,26 +791,6 @@ module.exports = function(app, passport) {
 		res.redirect("/users/login");
 	});
 };
-// =====================================
-// HELPER:Find Email Address Db
-// =====================================
-function searchEmail(email) {
-	console.log("Dentro de funcion buscaemail");
-	console.log(email);
-	queryEmail = "select * from user where username = ?";
-	connection.query(queryEmail, [email], function(err, user) {
-		if (err) return done(err);
-		if (user.length) {
-			console.log(user[0]);
-		}
-	});
-}
-// =====================================
-// HELPER:Find Email Address Db
-// =====================================
-function saveToken(token) {
-	return;
-}
 
 // route middleware to make sure
 function isLoggedIn(req, res, next) {
