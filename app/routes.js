@@ -425,12 +425,21 @@ module.exports = function(app, passport) {
 	        }
 	        else if(rows === null || rows.length == 0){
 				console.log('Password reset token is invalid or has expired.');
-				return res.redirect('/users/password_recovery');
+				return res.redirect('/users/password_recovery',{message:'Password reset token is invalid or has expired.'});
 	        }
 	        else {
-	        	res.render('reset', {user: req.user});
+	        	res.render('/users/reset', {user: rows[0]});
 	        }
   		});
+
+	});
+
+	// =====================================
+	// SECTION:Tokens Validations
+	// =====================================
+	app.post('/reset/:token', function(req, res) {
+		console.log('To Be implemented');
+		
 
 	});
 
