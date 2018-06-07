@@ -7,11 +7,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      <form action="" method="POST">
       <div class="modal-body">
-        <form action="" method="POST">
             <div class="form-group">
                 <select id="soflow">
-                    <option>Select Receiver Budget</option>
+                    <option>FROM:</option>
                     <option>lista de cuentas de presupuesto</option>
                     <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                 </select>
@@ -20,7 +20,7 @@
                 <input name="money" type="number" min="0" step="any" class="form-control" placeholder="Amount" required>
             <div class="form-group">
                 <select id="soflow">
-                    <option>Select Receiver Budget</option>
+                    <option>TO:</option>
                     <option>lista de cuentas de presupuesto</option>
                     <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                 </select>
@@ -29,9 +29,10 @@
 
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary">Transfer</button>
+        <button type="submit" class="btn btn-primary">Transfer</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="document.getElementById('transfer').style.display='none'">Close</button>
       </div>
+      </form>
     </div>
   </div>
 </div>
