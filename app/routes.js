@@ -433,6 +433,25 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.get("/users/dashboard/own_transactions",function(req, res){
+		res.render("./user/dashboard/own_transactions", {
+			//add more logic here!
+			user: req.user, // get the user out of session and pass to template
+			title: "Transaction",
+			message:req.flash("message"), 
+			dump:"No se que es"
+		});
+	});
+
+	app.get("/users/dashboard/other_transactions",function(req, res){
+		res.render("./user/dashboard/other_transactions", {
+			//add more logic here!
+			user: req.user, // get the user out of session and pass to template
+			title: "Transaction",
+			message:req.flash("message"), 
+			dump:"No se que es"
+		});
+	});
 	app.post("/users/password_recovery", function(req, res, next) {
 		//Async magic happens here :) hfjs
 		async.waterfall([
