@@ -124,6 +124,12 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.get("/users/dashboard/transactions", isLoggedIn, function(req,res){
+		res.render("./user/dashboard/transactions", {
+			title: "Sync Account",
+			data:"NOSE QUE ES"
+		});
+	})
 	app.post("/test",isLoggedIn,function(req,res){
 		var data = req.body
 		console.log(data)
