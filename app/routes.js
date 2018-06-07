@@ -640,11 +640,120 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:BUDGETS
 	// =====================================
-
 	app.get("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/create_budget", {
-			user: req.user // get the user out of session and pass to template
+		var selectQuery = "SELECT name_bank, number_acc, type_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id;";
+		connection.query(selectQuery, [req.user.id], function (err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			var urilist = [];
+			var balance = [];
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					req.user.id +
+					"/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+			}
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				//console.log(resc.getBody("utf-8"));
+				balance.push(resc.getBody("utf-8"));
+			}
+
+			function numberTypeAcc(user, typeAcc, array, cb) {
+				var queryCount = "SELECT COUNT(*) AS numberAcc FROM account WHERE account.id=? AND type_acc=?;";
+				connection.query(queryCount, [user, typeAcc], function (err, row) {
+					if (err) {
+					console.log("Wrong Query in Current Database");
+					return cb(err);
+					}
+					array.push(row[0].numberAcc);
+					return cb(null);
+				});
+			}
+			/*
+			var numberAccounts = [];
+			
+			numberTypeAcc(req.user.id, "credit", numberAccounts, function(err) {
+				if(err) throw err;
+				console.log(numberAccounts);
+			});
+			numberTypeAcc(req.user.id, "current", numberAccounts, function(err) {
+				if(err) throw err;
+				console.log(numberAccounts);
+			});
+			numberTypeAcc(req.user.id, "saving", numberAccounts, function(err) {
+				if(err) throw err;
+				console.log(numberAccounts);
+			});
+
+			console.log(numberAccounts);
+			*/
+			res.render("./user/dashboard/create_budget", {
+				user: req.user, // get the user out of session and pass to template
+				data: rows,
+				balances: balance,
+				//credit: numberAccounts[0],
+				//current: numberAccounts[1],
+				//saving: numberAccounts[2]
+			});
+		})
+	});
+
+	// =====================================
+	// SECTION:BUDGETS
+	// =====================================
+	app.post("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
+		var properties = Object.keys(req.body);
+		var values = Object.values(req.body)
+		console.log(properties);
+		
+		nameBudget = req.body.nameBudget;
+		amount = req.body.money;
+		currency = req.body.currency;
+
+		var queryCount = "SELECT COUNT(type_acc) AS numberAcc FROM account WHERE account.id=?;";
+		connection.query(queryCount, [req.user.id], function (err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			//console.log(req.body.hasOwnProperty("accCredit".concat(1)));
+
+			var accountsBudget = [];
+			for (let i = 0; i < properties.length; i++) {
+				for (let j = 0; j < rows[0].numberAcc; j++) {
+					if(properties[i] === "accCredit".concat(j) ||
+						properties[i] === "accCurrent".concat(j) ||
+						properties[i] === "accSaving".concat(j)) {
+						accountsBudget.push(values[i]);
+					}
+				}
+			}
+
+			var insertBudget = "INSERT INTO budget (id, id_currency, name_budget, type_budget, recurrency_budget, totalAmount_budget) VALUES (?, ?, ?, ?, ?, ?);";
+
+			connection.query(insertBudget, [req.user.id,currency,nameBudget,nameBudget,0,amount], function(err,rows) {
+				if (err) {
+					console.log("Wrong Query in Current Database");
+					throw err;
+				}
+				var insertAccBudget = "INSERT INTO itemBudget (id_budget, id_acc) VALUES ((SELECT id_budget FROM budget WHERE name_budget=?),(SELECT id_acc FROM account WHERE number_acc=?));"
+				for (let i = 0; i < accountsBudget.length; i++) {
+					connection.query(insertAccBudget, [nameBudget, accountsBudget[i]], function(err,rows) {
+						if (err) {
+							console.log("Wrong Query in Current Database");
+						throw err;
+						}
+					});
+				}
+			});
 		});
+
+		res.redirect("/users/dashboard/accounts/budget");
 	});
 
 	//NO IMPLEMENTADO

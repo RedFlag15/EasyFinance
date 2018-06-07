@@ -7,7 +7,7 @@
     <!-- Preloader - style you can find in spinners.css -->
     <div class="preloader">
         <svg class="circular" viewBox="25 25 50 50">
-			<circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" /> </svg>
     </div>
     <!-- Main wrapper  -->
     <div id="main-wrapper">
@@ -33,15 +33,17 @@
                 <div class="card-body">
                     <div class="login-form">
                         <h2 class="control-label">Create a Budget</h4>
-                        <form action="" method="POST">
+                        <form action="/users/dashboard/create_budget" method="POST">
                             <div class="form-group">
                                  <label class="control-label">Budget Name</label>
-                                 <input name="name" type="text" class="form-control" placeholder="Name" required>
+                                 <input name="nameBudget" type="text" class="form-control" placeholder="Name" required>
                             </div>
                             <div class="form-group">
-                                 <select id="soflow">
-                                    <option>Select a Currency</option>
-                                    <option>lista de monedas</option>
+                                 <select id="soflow" name="currency">
+                                    <option value=1>Select a Currency</option>
+                                    <option value=1>Dollar</option>
+                                    <option value=2>Euro</option>
+                                    <option value=3>Pesos COP</option>
                                     <!--document.getElementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                                 </select>
                             </div>
@@ -57,27 +59,43 @@
                                     
                                         <label class="control-label">Credit Accounts</label>
                                         <table>
-                                            <!--for
+                                            <% for(let i = 0; i < data.length; i++) { %>
+                                                <% if (data[i].type_acc === "credit") { %>
                                                 <tr>
-                                                    <td>numerocuenta  balancecuenta etc</td>
-                                                    <td><input style="width:100%" type="checkbox" name="nombrevariable" value="numerocuenta"></td>                                        
+                                                    <td><%=data[i].name_bank%></td>
+                                                    <td><%=data[i].number_acc%></td>
+                                                    <td><%=balances[i]%></td>
+                                                    <td><input style="width:100%" type="checkbox" name="accCredit<%=i%>" value="<%=data[i].number_acc%>"></td>                                  
                                                 </tr>
-                                            -->
+                                                <% } %>
+                                            <% } %>
                                         </table>
                                         <label class="control-label">Savings Accounts</label>
-                                            <!--for
+                                        <table>
+                                            <% for(let i = 0; i < data.length; i++) { %>
+                                                <% if (data[i].type_acc === "saving") { %>
                                                 <tr>
-                                                    <td>numerocuenta  balancecuenta etc</td>
-                                                    <td><input style="width:100%" type="checkbox" name="nombrevariable" value="numerocuenta"></td>                                        
+                                                    <td><%=data[i].name_bank%></td>
+                                                    <td><%=data[i].number_acc%></td>
+                                                    <td><%=balances[i]%></td>
+                                                    <td><input style="width:100%" type="checkbox" name="accSaving<%=i%>" value="<%=data[i].number_acc%>"></td>                                  
                                                 </tr>
-                                            -->
+                                                <% } %>
+                                            <% } %>
+                                        </table>
                                         <label class="control-label">Currrent Accounts</label>
-                                            <!--for
+                                        <table>
+                                            <% for(let i = 0; i < data.length; i++) { %>
+                                                <% if (data[i].type_acc === "current") { %>
                                                 <tr>
-                                                    <td>numerocuenta  balancecuenta etc</td>
-                                                    <td><input style="width:100%" type="checkbox" name="nombrevariable" value="numerocuenta"></td>                                        
+                                                    <td><%=data[i].name_bank%></td>
+                                                    <td><%=data[i].number_acc%></td>
+                                                    <td><%=balances[i]%></td>
+                                                    <td><input style="width:100%" type="checkbox" name="accCurrent<%=i%>" value="<%=data[i].number_acc%>"></td>                            
                                                 </tr>
-                                            -->                                                                
+                                                <% } %>
+                                            <% } %>
+                                        </table>                                                               
                                 </div>
 
                             </div>
