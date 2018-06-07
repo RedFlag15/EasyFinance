@@ -37,13 +37,18 @@
                             <label class="control-label">Credit Accounts</label>
                             <table>
                                 <% for(let i = 0; i < results.length; i++) { %>
+                                    <%if (results[i].typeAcc === "credit") { %>
+                                        boooo
+                                    <% } %>
                                     <tr>
+                                        <%=results[i].typeAcc%>
                                         <td><%=results[i].bankAcc%>  <%=results[i].balanceAcc%> <%=results[i].numberAcc%></td>
-                                        <td><input style="width:100%" type="checkbox" name="selectacc<%=i%>" value="<%=results[i].numberAcc%>"></td>                                        
+                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%> "></td>                                        
                                     </tr>
                                 <% } %>
                             </table>
                             <label class="control-label">Savings Accounts</label>
+
                             
 
 

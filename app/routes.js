@@ -125,7 +125,9 @@ module.exports = function(app, passport) {
 	});
 
 	app.post("/test",isLoggedIn,function(req,res){
-		console.log(req.body);
+		var data = req.body
+		console.log(data)
+
 	})
 
 	// =====================================
