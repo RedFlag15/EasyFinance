@@ -157,13 +157,16 @@ module.exports = function(app, passport) {
 				console.log(resc.getBody("utf-8"));
 				balance.push(resc.getBody("utf-8"));
 			}
+			console.log('-----------');
+			console.log(req.user)
 			res.render("./user/dashboard/credit", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
 				dump: "Credit",
 				title: "Credit Accounts",
 				data: rows,
-				balances: balance
+				balances: balance, 
+				message:""
 			});
 		});
 	});
@@ -172,7 +175,52 @@ module.exports = function(app, passport) {
 		req,
 		res
 	) {
-		console.log(req.body);
+
+		var bankname =req.body.bank;
+		async.waterfall([
+		    async.apply(findBankID, bankname),
+		    async.apply(deleteAccount, req),
+		], function (err, result) {
+		    console.log(result)
+		    res.redirect('/users/dashboard/accounts/credit');
+		});
+
+		function findBankID(bankname, callback) {
+		    console.log('Step 1:::Find BANK');
+		    console.log(bankname); // Outputs: 1   
+		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
+		    connection.query(BankIDQuery, [bankname], function(err, rows){
+		        if(err){
+		            console.log('There was a problem meanwhile doing the Query');
+		            callback(null, '');
+		        }
+		        if(rows!==null){
+		            console.log(rows);
+		            callback(null, rows[0].id_bank);
+		        }
+		        else{
+		            console.log('No existe ese token');
+		            console.log(rows);
+		            callback(null, null);   
+		        }
+		    });
+		    
+		}
+
+		function deleteAccount(req,rows, callback) {
+		    console.log('Step 2 Reset Password');
+		    console.log(req.user.id,req.body.anumber,req.body.bank)
+		    console.log(rows)  
+		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"credit"],function(err,rows){
+				if(err){
+					console.log('Wrong delete for Credit')
+	                req.flash('message', 'Impossible to Delete Credit Account');
+	                res.redirect('/users/dashboard/accounts/credit');
+				}
+			    callback(null, 'done');
+			});
+		}
 	});
 	// =====================================
 	// SECTION:CURRENT
@@ -217,13 +265,65 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.post("/users/dashboard/accounts/current/delete", isLoggedIn, function(
+		req,
+		res
+	) {
+
+		var bankname =req.body.bank;
+		async.waterfall([
+		    async.apply(findBankID, bankname),
+		    async.apply(deleteAccount, req),
+		], function (err, result) {
+		    console.log(result)
+		    res.redirect('/users/dashboard/accounts/credit');
+		});
+
+		function findBankID(bankname, callback) {
+		    console.log('Step 1:::Find BANK');
+		    console.log(bankname); // Outputs: 1   
+		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
+		    connection.query(BankIDQuery, [bankname], function(err, rows){
+		        if(err){
+		            console.log('There was a problem meanwhile doing the Query');
+		            callback(null, '');
+		        }
+		        if(rows!==null){
+		            console.log(rows);
+		            callback(null, rows[0].id_bank);
+		        }
+		        else{
+		            console.log('No existe ese token');
+		            console.log(rows);
+		            callback(null, null);   
+		        }
+		    });
+		    
+		}
+
+		function deleteAccount(req,rows, callback) {
+		    console.log('Step 2 Reset Password');
+		    console.log(req.user.id,req.body.anumber,req.body.bank)
+		    console.log(rows)  
+		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"current"],function(err,rows){
+				if(err){
+					console.log('Wrong delete for Credit')
+	                req.flash('message', 'Impossible to Delete Credit Account');
+	                res.redirect('/users/dashboard/accounts/current');
+				}
+			    callback(null, 'done');
+			});
+		}
+	});
+
 	// =====================================
 	// SECTION:SAVING
 	// =====================================
 	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(
 		req,
 		res
-	) {
+	) {	
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "saving"], function(
@@ -246,7 +346,7 @@ module.exports = function(app, passport) {
 			}
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
-				console.log(resc.getBody("utf-8"));
+				//console.log(resc.getBody("utf-8"));
 				balance.push(resc.getBody("utf-8"));
 			}
 			res.render("./user/dashboard/savings", {
@@ -260,6 +360,57 @@ module.exports = function(app, passport) {
 		});
 	});
 
+	app.post("/users/dashboard/accounts/savings/delete", isLoggedIn, function(
+		req,
+		res
+	) {
+		console.log(req.body)
+		var bankname =req.body.bank;
+		async.waterfall([
+		    async.apply(findBankID, bankname),
+		    async.apply(deleteAccount, req),
+		], function (err, result) {
+		    console.log(result)
+		    res.redirect('/users/dashboard/accounts/savings');
+		});
+
+		function findBankID(bankname, callback) {
+		    console.log('Step 1:::Find BANK');
+		    console.log(bankname); // Outputs: 1   
+		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
+		    connection.query(BankIDQuery, [bankname], function(err, rows){
+		        if(err){
+		            console.log('There was a problem meanwhile doing the Query');
+		            callback(null, '');
+		        }
+		        if(rows!==null){
+		            console.log(rows);
+		            callback(null, rows[0].id_bank);
+		        }
+		        else{
+		            console.log('No existe ese token');
+		            console.log(rows);
+		            callback(null, null);   
+		        }
+		    });
+		    
+		}
+
+		function deleteAccount(req,rows, callback) {
+		    console.log('Step 2 Reset Password');
+		    console.log(req.user.id,req.body.anumber,req.body.bank)
+		    console.log(rows)  
+		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"saving"],function(err,rows){
+				if(err){
+					console.log('Wrong delete for Credit')
+	                req.flash('message', 'Impossible to Delete Credit Account');
+	                res.redirect('/users/dashboard/accounts/savings');
+				}
+			    callback(null, 'done');
+			});
+		}
+	});
 	// =====================================
 	// SECTION:PROFILE
 	// =====================================

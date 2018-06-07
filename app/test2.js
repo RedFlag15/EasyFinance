@@ -4,18 +4,19 @@ const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
 
 var async = require('async');
-var token ="bd8ccff35b23c73a850e322b1e735751931528acx"
+
+var bankname ="BBVA";
 async.waterfall([
-    async.apply(findToken, token), 
+    async.apply(findBankID, bankname), 
     resetPassword,
 ], function (err, result) {
     console.log(result)
 });
 
-function findToken(token, callback) {
-    console.log('Step 1:::Find Token');
+function findBankID(token, callback) {
+    console.log('Step 1:::Find BANK');
     console.log(token); // Outputs: 1   
-    TokenQuery ="select * from user where Token=?;"
+    TokenQuery ="SELECT id_bank FROM bank where name_bank=?;"
     connection.query(TokenQuery, [token], function(err, rows){
         if(err){
             console.log('There was a problem meanwhile doing the Query');
@@ -23,7 +24,7 @@ function findToken(token, callback) {
         }
         if(rows!==null){
             console.log(rows);
-            callback(null, rows);
+            callback(null, rows[0].id_bank);
         }
         else{
             console.log('No existe ese token');
@@ -33,18 +34,9 @@ function findToken(token, callback) {
     });
     
 }
-
 function resetPassword(user, callback) {
     console.log('Step 2 Reset Password');
     console.log(user)
-    if(){
-        //req.flash('error', 'Password reset token is invalid or has expired.');
-        //return res.redirect('/forgot');
-        console.log('No hay usuarios')
-        callback(null, 'NOUSER');
-    }
-    else{
-        callback(null, 'done');
-    }
+    callback(null, 'done');
     
 }

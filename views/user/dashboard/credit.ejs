@@ -27,6 +27,10 @@
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
                     <h3 class="text-primary">Credit Accounts</h3> </div>
+                    <% if ( message ) { %>
+                        <div><%- req.flash('message') %></div>
+                    <% } %>
+                    
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
@@ -53,7 +57,7 @@
                                 <tr>
                                     <td><%=data[i].number_acc%></td>
                                     <td><%=data[i].name_bank%></td>
-                                    <td><%=balances[i]%></td>                                    
+                                    <td>$<%=balances[i]%></td>                                    
                                     <td><button class="btn btn-primary btn-flat" onclick="deleteAcc(this)">Delete</button></td>
                                 </tr>
                                 <% } %>
