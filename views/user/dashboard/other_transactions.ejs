@@ -30,7 +30,7 @@
                 <div class="col-md-7 align-self-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                        <li class="breadcrumb-item active">Transactions<%= dump %></li>
+                        <li class="breadcrumb-item active">Transactions</li>
                     </ol>
                 </div>
             </div>
@@ -40,7 +40,7 @@
             <div class="container-fluid">
                 <!-- Start Page Content -->
                 <div class="card-body">
-                    <button type="button" class="btn btn-secondary"  onclick="document.getElementById('register_account').style.display='block'">Register an Account</button></a>
+                    <button type="button" class="btn btn-primary"  onclick="document.getElementById('register_account').style.display='block'">Register an Account</button></a>
                     <div class="login-form">
                     <h2 class="control-label">Transactions to Registered Accounts</h4>
                     <form action="" method="POST">
@@ -51,8 +51,10 @@
                                 <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                             </select>
                         </div>
+                        <div class="form-group">
                             <label>Input the Amount to Transfer</label>
                             <input name="money" type="number" min="0" step="any" class="form-control" placeholder="Amount" required>
+                        </div>
                         <div class="form-group">
                             <select id="soflow">
                                 <option>TO:</option>
@@ -60,8 +62,10 @@
                                 <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                             </select>
                         </div>
+                        <div class="form-group">
                         <label>Comments</label>
                             <input name="comments" type="text" class="form-control" placeholder="Comments" required>
+                        </div>
                         <button type="submit" class="btn btn-primary">Transfer</button>
                     </form>
                     <a href="/users/dashboard"> <button type="button" class="btn btn-secondary">Close</button></a>
