@@ -132,9 +132,14 @@ module.exports = function(app, passport) {
 			data:"NOSE QUE ES"
 		});
 	})
-	app.post("/test",isLoggedIn,function(req,res){
-		var data = req.body
-		console.log(data)	//debug
+	app.post("/users/dashboard/account/sync_process",isLoggedIn,function(req,res){
+		var data = req.body;
+		console.log(data);	 //debug 
+		var datalen= Object.keys(data).length
+		console.log(datalen);	 //debug 
+		for (var i=0; i<=datalen; i++) {
+			console.log(data[0]);
+		}
 
 	})
 

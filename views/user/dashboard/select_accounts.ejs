@@ -33,28 +33,59 @@
                 <div class="card-body">
                     <div class="login-form">
                         <h2 class="control-label">Select to Sync your Accounts</h4>
-                        <form action="/test" method="post">
+                        <form action="/users/dashboard/account/sync_process" method="post">
                             <label class="control-label">Credit Accounts</label>
                             <table>
+                                <tr>
+                                    <td class="text-center">Account Number</td>
+                                    <td class="text-center">Balance</td>
+                                </tr>
                                 <% for(let i = 0; i < results.length; i++) { %>
-                                    <%if (results[i].typeAcc === "credit") { %>
-                                        boooo
+                                    <%if (results[i].typeAcc =="credit") { %>
+                                        <tr>
+                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
+                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
+                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                    </tr>    
                                     <% } %>
-                                    <tr>
-                                        <%=results[i].typeAcc%>
-                                        <td><%=results[i].bankAcc%>  <%=results[i].balanceAcc%> <%=results[i].numberAcc%></td>
-                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%> "></td>                                        
-                                    </tr>
                                 <% } %>
                             </table>
                             <label class="control-label">Savings Accounts</label>
-
+                            <table>
+                                <tr>
+                                    <td class="text-center">Account Number</td>
+                                    <td class="text-center">Balance</td>
+                                </tr>
+                                <% for(let i = 0; i < results.length; i++) { %>
+                                    <%if (results[i].typeAcc =="saving") { %>
+                                        <tr>
+                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
+                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
+                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                    </tr>    
+                                    <% } %>
+                                <% } %>
+                            </table>
                             
 
 
                             <label class="control-label">Currrent Accounts</label>
-                            
-
+                            <table>
+                                <tr>
+                                    <td class="text-center">Account Number</td>
+                                    <td class="text-center">Balance</td>
+                                </tr>
+                                <% for(let i = 0; i < results.length; i++) { %>
+                                    <%if (results[i].typeAcc =="current") { %>
+                                        <tr>
+                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
+                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
+                                        <td style="border=0px"><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                    </tr>    
+                                    <% } %>
+                                <% } %>
+                            </table>
+                            <br>
                             <button type="submit" class="btn btn-primary">Sync</button>
                             <a href="/users/dashboard/add_account"><button class="btn btn-secondary">Cancel</button></a>
                         </form>

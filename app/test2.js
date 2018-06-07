@@ -37,6 +37,7 @@ function findBankID(token, callback) {
 function resetPassword(user, callback) {
     console.log('Step 2 Reset Password');
     console.log(user)
+    
     callback(null, 'done');
     
 }
