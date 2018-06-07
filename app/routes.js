@@ -122,6 +122,8 @@ module.exports = function(app, passport) {
 			title: "Sync Account",
 			results: data.account
 		});
+
+
 	});
 
 	app.get("/users/dashboard/transactions", isLoggedIn, function(req,res){
@@ -132,7 +134,7 @@ module.exports = function(app, passport) {
 	})
 	app.post("/test",isLoggedIn,function(req,res){
 		var data = req.body
-		console.log(data)
+		console.log(data)	//debug
 
 	})
 
@@ -162,7 +164,7 @@ module.exports = function(app, passport) {
 			}
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
-				console.log(resc.getBody("utf-8"));
+				console.log(resc.getBody("utf-8")); //debug
 				balance.push(resc.getBody("utf-8"));
 			}
 			console.log('-----------');
@@ -189,13 +191,13 @@ module.exports = function(app, passport) {
 		    async.apply(findBankID, bankname),
 		    async.apply(deleteAccount, req),
 		], function (err, result) {
-		    console.log(result)
+		    console.log(result)	//debug
 		    res.redirect('/users/dashboard/accounts/credit');
 		});
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');
-		    console.log(bankname); // Outputs: 1   
+		    console.log('Step 1:::Find BANK');	//debug
+		    console.log(bankname);	//debug
 		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
 		    connection.query(BankIDQuery, [bankname], function(err, rows){
 		        if(err){
@@ -207,7 +209,7 @@ module.exports = function(app, passport) {
 		            callback(null, rows[0].id_bank);
 		        }
 		        else{
-		            console.log('No existe ese token');
+		            console.log('No existe ese token');	//debug
 		            console.log(rows);
 		            callback(null, null);   
 		        }
@@ -216,13 +218,13 @@ module.exports = function(app, passport) {
 		}
 
 		function deleteAccount(req,rows, callback) {
-		    console.log('Step 2 Reset Password');
-		    console.log(req.user.id,req.body.anumber,req.body.bank)
-		    console.log(rows)  
+		    console.log('Step 2 Reset Password');	//debug
+		    console.log(req.user.id,req.body.anumber,req.body.bank);	//debug
+		    console.log(rows);	//debug
 		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
 			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"credit"],function(err,rows){
 				if(err){
-					console.log('Wrong delete for Credit')
+					console.log('Wrong delete for Credit');
 	                req.flash('message', 'Impossible to Delete Credit Account');
 	                res.redirect('/users/dashboard/accounts/credit');
 				}
@@ -288,8 +290,8 @@ module.exports = function(app, passport) {
 		});
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');
-		    console.log(bankname); // Outputs: 1   
+		    console.log('Step 1:::Find BANK');	//debug
+		    console.log(bankname);	//debug
 		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
 		    connection.query(BankIDQuery, [bankname], function(err, rows){
 		        if(err){
@@ -297,12 +299,12 @@ module.exports = function(app, passport) {
 		            callback(null, '');
 		        }
 		        if(rows!==null){
-		            console.log(rows);
+		            console.log(rows);	//debug
 		            callback(null, rows[0].id_bank);
 		        }
 		        else{
 		            console.log('No existe ese token');
-		            console.log(rows);
+		            console.log(rows);	//debug
 		            callback(null, null);   
 		        }
 		    });
@@ -311,8 +313,8 @@ module.exports = function(app, passport) {
 
 		function deleteAccount(req,rows, callback) {
 		    console.log('Step 2 Reset Password');
-		    console.log(req.user.id,req.body.anumber,req.body.bank)
-		    console.log(rows)  
+		    console.log(req.user.id,req.body.anumber,req.body.bank);	//debug
+		    console.log(rows);	//debug
 		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
 			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"current"],function(err,rows){
 				if(err){
@@ -372,7 +374,7 @@ module.exports = function(app, passport) {
 		req,
 		res
 	) {
-		console.log(req.body)
+		console.log(req.body);	//debug
 		var bankname =req.body.bank;
 		async.waterfall([
 		    async.apply(findBankID, bankname),
@@ -383,8 +385,8 @@ module.exports = function(app, passport) {
 		});
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');
-		    console.log(bankname); // Outputs: 1   
+		    console.log('Step 1:::Find BANK');	//debug
+		    console.log(bankname);	//debug
 		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
 		    connection.query(BankIDQuery, [bankname], function(err, rows){
 		        if(err){
@@ -392,13 +394,13 @@ module.exports = function(app, passport) {
 		            callback(null, '');
 		        }
 		        if(rows!==null){
-		            console.log(rows);
+		            console.log(rows);	//debug
 		            callback(null, rows[0].id_bank);
 		        }
 		        else{
 		            console.log('No existe ese token');
-		            console.log(rows);
-		            callback(null, null);   
+		            console.log(rows);	//debug
+		            callback(null, null);
 		        }
 		    });
 		    
@@ -406,8 +408,8 @@ module.exports = function(app, passport) {
 
 		function deleteAccount(req,rows, callback) {
 		    console.log('Step 2 Reset Password');
-		    console.log(req.user.id,req.body.anumber,req.body.bank)
-		    console.log(rows)  
+		    console.log(req.user.id,req.body.anumber,req.body.bank); //debug
+		    console.log(rows);	//debug
 		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
 			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"saving"],function(err,rows){
 				if(err){
@@ -478,16 +480,15 @@ module.exports = function(app, passport) {
 		    
 		function searchEmail(email,callback) {
 		    console.log('Step 1');
-		    //var email ="hfjimenez@utp.edu.coxx";
-		    console.log(req.body);
-		    var email = req.body.email
+		    console.log(req.body);	//debug
+		    var email = req.body.email;	
 		    var queryEmail = "select * from user where username = ?";
 		    connection.query(queryEmail, [email], function(err, user){
 		        if(err){
 		            console.log('Error');
 		            throw err;
 		        }
-		        console.log(user)
+		        console.log(user);	//debug
 		        var resultEmail = user; 
 		        if(resultEmail.length>0){
 		          emailFound = user[0].username ;
@@ -504,7 +505,7 @@ module.exports = function(app, passport) {
 		    console.log('Step 2');
 		    console.log("Generar Token");
 		    if(email!==""){
-		        console.log(email) 
+		        console.log(email);	//debug
 		        var  tmpToken = crypto.randomBytes(20).toString('hex');
 		        callback(null, tmpToken,email);
 		    }
@@ -516,27 +517,27 @@ module.exports = function(app, passport) {
 		}
 
 		function storeToken(Token,email,callback) {
-		        console.log('Step 3');
-		        console.log('Store Token')
-		        console.log(Token);
-		        console.log(email);
+		        console.log('Step 3');	//debug
+		        console.log('Store Token');	//debug
+		        console.log(Token);	//debug
+		        console.log(email);	//debug
 		        if(Token!==null && email!==null){
 		        	var updateTokenQuery = "UPDATE user SET Token=? where username=?"
 			        connection.query(updateTokenQuery, [Token, email],function(err,status){
 			            if(err){
 			                console.log('Impossible to update Token, Database Query Error');
-			                console.log(err);
+			                console.log(err);	//debug
 			                callback(null,false,Token, email);
 			            }
 			            else{
-			                console.log('Token Update Success');
+			                console.log('Token Update Success');	//debug
 			                callback(null,true,Token, email);
 			            }
 			        });
 
 		        }
 		        else{
-		        	console.log('WTF No hay token generado...shit')
+		        	console.log('WTF No hay token generado...shit');	//debug
 		        	callback(null,false,Token, email);
 		        }		        
 		}
@@ -545,8 +546,8 @@ module.exports = function(app, passport) {
 		    console.log('Step 4');
 		    console.log(flag);
 		    if(flag){
-		        console.log("Sending Email :) to");
-		        console.log("*********");      
+		        console.log("Sending Email :) to");	//debug
+		        console.log("*********");      //debug
 		        var smtpTransport = nodemailer.createTransport(
 		                    	"smtps://easyfinance.co@gmail.com:" +
 		                        encodeURIComponent("karminakoala2018") +
@@ -585,8 +586,8 @@ module.exports = function(app, passport) {
 		    else{
 		    	req.flash('error', 'Impossible to Send the email, Try again.');
 		        //Please try again and render or if we find an  email address with 
-		        console.log("Correo  Electronico NOOO enviado con instrucciones")
-		        callback(null, 'done');       
+		        console.log("Correo  Electronico NOOO enviado con instrucciones");	//debug
+		        callback(null, 'done');	
 		    }   
 		}
 	});
@@ -602,7 +603,7 @@ module.exports = function(app, passport) {
 	            req.flash("message","There was a problem while processing your request");
 	        }
 	        else if(rows === null || rows.length == 0){
-				console.log('Password reset token is invalid or has expired.');
+				console.log('Password reset token is invalid or has expired.');	//debug
 				return res.redirect('/users/password_recovery',{message:'Password reset token is invalid or has expired.'});
 	        }
 	        else {
@@ -617,7 +618,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.post('/reset/:token', function(req, res) {
 		console.log('To Be implemented');
-		
 
 	});
 
@@ -646,7 +646,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:GROUP ACCOUNTS
 	// =====================================
-
 	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/group_accounts", {
 			user: req.user // get the user out of session and pass to template
