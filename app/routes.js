@@ -52,6 +52,10 @@ function banklist(name) {
 	return list[name];
 }
 
+function getSumBalance(total, num) {
+	return total + num;
+}
+
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
@@ -110,9 +114,40 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get("/users/dashboard", isLoggedIn, function(req, res) {
 		//Agregar las consultas de balances, imagen de perfil
-		res.render("./user/dashboard/main", {
-			//add more logic here!
-			user: req.user // get the user out of session and pass to template
+		var userid = req.user.id;
+		console.log("Dashboard"); //debug
+		console.log(userid); //debug
+		var selectQuery = "SELECT number_acc FROM account where id=?";
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
+			if (err) {
+				console.log("Wrong Query in Credit Database");
+				throw err;
+			}
+			console.log(rows); //debug
+			var urilist = [];
+			var balance = [];
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+				console.log(uribase); //debug
+			}
+
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				console.log(resc.getBody("utf-8")); //debug
+				balance.push(resc.getBody("utf-8"));
+			}
+			console.log(balance.map(Number).reduce(getSumBalance)); //debug
+
+			console.log("-----------"); //debug
+			console.log(req.user); //debug
+			res.render("./user/dashboard/main", {
+				//add more logic here!
+				user: req.user, // get the user out of session and pass to template
+				balancev: balance.map(Number).reduce(getSumBalance)
+			});
 		});
 	});
 
