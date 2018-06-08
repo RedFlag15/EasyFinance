@@ -756,13 +756,22 @@ module.exports = function(app, passport) {
 		res.redirect("/users/dashboard/accounts/budget");
 	});
 
-	//NO IMPLEMENTADO
 	// =====================================
-	// SECTION:GROUP ACCOUNTS
+	// SECTION: SHOW BUDGET
 	// =====================================
-	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/group_accounts", {
-			user: req.user // get the user out of session and pass to template
+	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
+		var selectQuery = "SELECT name_budget, totalAmount_budget, name_currency FROM budget, currency WHERE budget.id=? AND budget.id_currency=currency.id_currency;";
+		connection.query(selectQuery, [req.user.id], function(err,rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+			throw err;
+			}
+			
+			res.render("./user/dashboard/budget", {
+				user: req.user, // get the user out of session and pass to template
+				dump: "Budgets",
+				data: rows
+			});
 		});
 	});
 
@@ -779,12 +788,11 @@ module.exports = function(app, passport) {
 
 	//NO IMPLEMENTADO
 	// =====================================
-	// SECTION:SHOW BUDGET
+	// SECTION: GROUP ACCOUNTS
 	// =====================================
-	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/budget", {
+	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
+		res.render("./user/dashboard/group_accounts", {
 			user: req.user, // get the user out of session and pass to template
-			dump: "Budgets"
 		});
 	});
 

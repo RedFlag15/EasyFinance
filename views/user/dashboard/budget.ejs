@@ -44,21 +44,25 @@
                         <div class="form-group">
                             <table id="accountTable">
                                 <tr>
-                                    <th>Account</th>
-                                    <th>Bank</th>
+                                    <th>Name</th>
                                     <th>Balance</th>
                                     <th>Currency</th>
                                     <th>Delete</th>
                                 </tr>
-                                <!--De Api-->
-                                <tr>
-                                    <td>xxxxx</td>
-                                    <td>xxxxx</td>
-                                    <td>xxxxx</td>
-                                    <td>xxxxx</td>
-                                    <td><button class="btn btn-primary btn-flat" onclick="deleteAcc(this)">Delete</button></td>
-                                </tr>
-                                <!--!!-->
+                                <% if (data.length === 0) { %>
+                                    <tr>
+                                        <td>"Do not have budgets created"</td>
+                                    </tr>
+                                <% } else { %>
+                                    <% for(let i = 0; i < data.length; i++) { %>
+                                    <tr>
+                                        <td><%=data[i].name_budget%></td>
+                                        <td><%=data[i].totalAmount_budget%></td>
+                                        <td><%=data[i].name_currency%></td>                                  
+                                        <td><button class="btn btn-primary btn-flat" onclick="deleteAcc(this)">Delete</button></td>
+                                    </tr>
+                                    <% } %>
+                                <% } %>
                             </table>
                             <td><button onclick="document.getElementById('transfer').style.display='block'" class="btn btn-primary btn-flat">Transfer</button></td>
                         </div>
