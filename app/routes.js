@@ -15,6 +15,7 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const app = express();
+const moment = require("moment");
 app.use(express.static(path.join(__dirname, "public")));
 
 // =====================================
@@ -300,13 +301,6 @@ module.exports = function(app, passport) {
 			}
 		} //end for
 		res.redirect("/users/dashboard"); //we finish the syncing...we need to check how to render, credit, saving, and current in a good manner
-	});
-
-	app.get("/users/dashboard/transactions", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/transactions", {
-			title: "Sync Account",
-			data: "NOSE QUE ES"
-		});
 	});
 
 	// =====================================
@@ -642,52 +636,101 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:TRANSACTIONS
 	// =====================================
+	app.get("/users/dashboard/transactions", isLoggedIn, function(req, res){
+		var selectQuery =
+			"SELECT id_acc, receiver_account, totalAmount_trans, descrip_trans, date_trans, time_trans FROM transaction WHERE transaction.id=? ORDER BY date_trans DESC, time_trans DESC LIMIT 10;";
+		connection.query(selectQuery, [req.user.id], function (err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database"); //debug
+				throw err;
+			}
+			res.render("./user/dashboard/transactions", {
+				user: req.user, // get the user out of session and pass to template
+				title: "Transaction",
+				data: rows
 
-	app.get("/users/dashboard/own_transactions", function(req, res) {
+			});
+		});		
+	});
+
+	app.get("/users/dashboard/own_transactions", isLoggedIn, function(req, res){
 		var selectQuery =
 			"SELECT number_acc, id_acc FROM account, user WHERE account.id=? AND user.id=account.id AND (type_acc=? OR type_acc=?);";
+		connection.query(selectQuery, [req.user.id, "saving", "current"], function (err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database"); //debug
+				throw err;
+			}
+			console.log(rows); //debug
+			res.render("./user/dashboard/own_transactions", {
+				//add more logic here!
+				user: req.user, // get the user out of session and pass to template
+				title: "Transaction",
+				data: rows
+				//dump:"No se que es"
+			});
+		});
+		
+	});
+
+	app.post("/users/dashboard/own_transactions", isLoggedIn, function(req, res){
+		var originAcc = req.body.originAcc;
+		var destinAcc = req.body.destinationAcc;
+		var valueTrans = req.body.money;
+		var dateTrans = moment().format("YYYY-MM-DD");
+		var timeTrans = moment().format("hh:mm:ss");
+
+		var selectBudget =
+			"SELECT DISTINCT number_acc FROM account WHERE id_acc=? OR id_acc=?;";
 		connection.query(
-			selectQuery,
-			[req.user.id, "saving", "current"],
-			function(err, rows) {
+			selectBudget,[originAcc, destinAcc],function(err, rows) {
 				if (err) {
 					console.log("Wrong Query in Current Database"); //debug
 					throw err;
 				}
-				console.log(rows); //debug
-				res.render("./user/dashboard/own_transactions", {
-					//add more logic here!
-					user: req.user, // get the user out of session and pass to template
-					title: "Transaction",
-					data: rows
-					//dump:"No se que es"
-				});
-			}
-		);
-	});
 
-	app.post("/users/dashboard/own_transactions", function(req, res) {
-		function addZero(i) {
-			if (i < 10) {
-				i = "0" + i;
-			}
-			return i;
-		}
-		function get_Date() {
-			var today = new Date();
-			var dd = today.getDate();
-			var mm = today.getMonth() + 1;
-			var yyyy = today.getFullYear();
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					rows[0].number_acc;
+				var resc = requests("GET", uribase);
+				var balance = resc.getBody("utf-8");
 
-			dd = addZero(dd);
-			mm = addZero(mm);
+				if(originAcc === destinAcc) {
+					req.flash('error', 'Destination account must be different from the origin account');
+				} else if(valueTrans > balance) {
+					req.flash('limit', 'Insufficient Balance');
+				} else {
+					var insertQuery =
+						"INSERT INTO transaction (id_currency, id_acc, totalAmount_trans, date_trans, time_trans, receiver_account, descrip_trans, id) VALUES ((SELECT id_currency FROM account WHERE id_acc=?), ?, ?, ?, ?, ?, ?, ?);";
+					connection.query(
+						insertQuery,
+						[originAcc, originAcc, valueTrans, dateTrans, timeTrans, destinAcc, "Transaction own", req.user.id],
+						function(err, row) {
+							if (err) {
+								console.log("Wrong Query in Current Database"); //debug
+								throw err;
+							}
+							//send transaction
+							var uriSend =
+								"http://apibank.herokuapp.com/sendtransfer/" +
+								rows[0].number_acc +
+								"/" +
+								valueTrans;
+							var resc = requests("PUT", uriSend);
 
-			return dd + "-" + mm + "-" + yyyy;
-		}
-		originAcc: req.body.originAcc;
-		destinAcc: req.body.destinationAcc;
-		valueTrans: req.body.money;
-		console.log(get_Date());
+							//receive transaction
+							var uriReceive =
+								"http://apibank.herokuapp.com/receivetransfer/" +
+								rows[1].number_acc +
+								"/" +
+								valueTrans;
+							var resc = requests("PUT", uriReceive);
+
+							console.log("---------------------------------"); //debug
+							console.log(rows); //debug
+					});
+				} 
+		});
 		res.redirect("/users/dashboard/transactions");
 	});
 

@@ -48,9 +48,25 @@
                                     <th>TO</th>
                                     <th>AMOUNT</th>
                                     <th>COMMENT</th>
-                                    <th>DATA</th>
+                                    <th>DATE</th>
                                     <th>TIME</th>
                                 </tr>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <% if (data.length === 0) { %>
+                                    <tr>
+                                        <td>Empty transaction history</td>
+                                    </tr>
+                                    <% } else { %>
+                                    <tr>
+                                        <td><%=data[i].id_acc%></td>
+                                        <td><%=data[i].receiver_account%></td>
+                                        <td><%=data[i].totalAmount_trans%></td>
+                                        <td><%=data[i].descrip_trans%></td>
+                                        <td><%=data[i].date_trans%></td>
+                                        <td><%=data[i].time_trans%></td>
+                                    </tr>
+                                    <% } %>
+                                <% } %>
                             
                                 <!--!!-->
                             </table>
