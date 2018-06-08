@@ -293,8 +293,6 @@ module.exports = function(app, passport) {
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
-					req.user.id +
-					"/" +
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
@@ -400,8 +398,6 @@ module.exports = function(app, passport) {
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
-					req.user.id +
-					"/" +
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
@@ -433,7 +429,7 @@ module.exports = function(app, passport) {
 			],
 			function(err, result) {
 				console.log(result);
-				res.redirect("/users/dashboard/accounts/credit");
+				res.redirect("/users/dashboard/accounts/current");
 			}
 		);
 
@@ -505,8 +501,6 @@ module.exports = function(app, passport) {
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
-					req.user.id +
-					"/" +
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
@@ -820,8 +814,6 @@ module.exports = function(app, passport) {
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
-					req.user.id +
-					"/" +
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
@@ -846,24 +838,6 @@ module.exports = function(app, passport) {
 					return cb(null);
 				});
 			}
-			/*
-			var numberAccounts = [];
-			
-			numberTypeAcc(req.user.id, "credit", numberAccounts, function(err) {
-				if(err) throw err;
-				console.log(numberAccounts);
-			});
-			numberTypeAcc(req.user.id, "current", numberAccounts, function(err) {
-				if(err) throw err;
-				console.log(numberAccounts);
-			});
-			numberTypeAcc(req.user.id, "saving", numberAccounts, function(err) {
-				if(err) throw err;
-				console.log(numberAccounts);
-			});
-
-			console.log(numberAccounts);
-			*/
 			res.render("./user/dashboard/create_budget", {
 				user: req.user, // get the user out of session and pass to template
 				data: rows,
