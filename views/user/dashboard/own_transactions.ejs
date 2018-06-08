@@ -44,18 +44,22 @@
                     <h2 class="control-label">Transactions Beetween your Own Accounts</h4>
                     <form action="" method="POST">
                         <div class="form-group">
-                            <select id="soflow">
-                                <option>FROM:</option>
-                                <option>lista de cuentas de ahorros y corriente</option>
+                            <select id="soflow" name="originAcc">
+                                <option value=0>FROM:</option>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <option value="<%=data[i].id_acc%>"><%=data[i].number_acc%></option>
+                                <% } %>
                                 <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                             </select>
                         </div>
                             <label>Input the Amount to Transfer</label>
                             <input name="money" type="number" min="0" step="any" class="form-control" placeholder="Amount" required>
                         <div class="form-group">
-                            <select id="soflow">
-                                <option>TO:</option>
-                                <option>lista de cuentas de ahorros y corriente</option>
+                            <select id="soflow" name="destinationAcc">
+                                <option value=0>TO:</option>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <option value="<%=data[i].id_acc%>"><%=data[i].number_acc%></option>
+                                <% } %>
                                 <!--document.elementById("soflow").value retorna la opcion seleccionada  posicion 0 es "select a currency"-->
                             </select>
                         </div>

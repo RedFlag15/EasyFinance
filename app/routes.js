@@ -604,14 +604,53 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	app.get("/users/dashboard/own_transactions", function(req, res) {
-		res.render("./user/dashboard/own_transactions", {
-			//add more logic here!
-			user: req.user, // get the user out of session and pass to template
-			title: "Transaction",
-			message: req.flash("message"),
-			dump: "No se que es"
+	// =====================================
+	// SECTION:TRANSACTIONS
+	// =====================================
+
+	app.get("/users/dashboard/own_transactions",function(req, res){
+		var selectQuery =
+			"SELECT number_acc, id_acc FROM account, user WHERE account.id=? AND user.id=account.id AND (type_acc=? OR type_acc=?);";
+		connection.query(selectQuery, [req.user.id, "saving", "current"], function (err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database"); //debug
+				throw err;
+			}
+			console.log(rows); //debug
+			res.render("./user/dashboard/own_transactions", {
+				//add more logic here!
+				user: req.user, // get the user out of session and pass to template
+				title: "Transaction",
+				data: rows
+				//dump:"No se que es"
+			});
 		});
+		
+	});
+
+	app.post("/users/dashboard/own_transactions",function(req, res){
+		function addZero(i) {
+	    	if (i < 10) {
+	        	i = '0' + i;
+	    	}
+	    	return i;
+		}
+		function get_Date() {
+    		var today = new Date();
+        	var dd = today.getDate();
+        	var mm = today.getMonth()+1;
+        	var yyyy = today.getFullYear();
+        
+        	dd = addZero(dd);
+        	mm = addZero(mm);
+ 
+        	return dd+'-'+mm+'-'+yyyy;
+		}
+		originAcc: req.body.originAcc;
+		destinAcc: req.body.destinationAcc;
+		valueTrans: req.body.money;
+		console.log(get_Date());
+		res.redirect("/users/dashboard/transactions");
 	});
 
 	app.get("/users/dashboard/other_transactions", function(req, res) {
@@ -934,6 +973,26 @@ module.exports = function(app, passport) {
 				data: rows
 			});
 		});
+	});
+
+	// =====================================
+	// SECTION: DELETE BUDGET
+	// =====================================
+	app.post("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
+		var budget = req.body.budget;
+		var user = req.user.id;
+
+		deleteQuery=
+			"DELETE FROM budget WHERE id=? AND name_budget=?;";
+		connection.query(deleteQuery,[user,budget],function(err,rows) {
+			if(err){
+				console.log("Wrong Delete of budget");
+                //req.flash('message', 'Impossible to Delete Budget');
+                throw err;
+			}
+		});
+
+		res.redirect("/users/dashboard/accounts/budget");
 	});
 
 	//NO IMPLEMENTADO
