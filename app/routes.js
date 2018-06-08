@@ -608,43 +608,46 @@ module.exports = function(app, passport) {
 	// SECTION:TRANSACTIONS
 	// =====================================
 
-	app.get("/users/dashboard/own_transactions",function(req, res){
+	app.get("/users/dashboard/own_transactions", function(req, res) {
 		var selectQuery =
 			"SELECT number_acc, id_acc FROM account, user WHERE account.id=? AND user.id=account.id AND (type_acc=? OR type_acc=?);";
-		connection.query(selectQuery, [req.user.id, "saving", "current"], function (err, rows) {
-			if (err) {
-				console.log("Wrong Query in Current Database"); //debug
-				throw err;
+		connection.query(
+			selectQuery,
+			[req.user.id, "saving", "current"],
+			function(err, rows) {
+				if (err) {
+					console.log("Wrong Query in Current Database"); //debug
+					throw err;
+				}
+				console.log(rows); //debug
+				res.render("./user/dashboard/own_transactions", {
+					//add more logic here!
+					user: req.user, // get the user out of session and pass to template
+					title: "Transaction",
+					data: rows
+					//dump:"No se que es"
+				});
 			}
-			console.log(rows); //debug
-			res.render("./user/dashboard/own_transactions", {
-				//add more logic here!
-				user: req.user, // get the user out of session and pass to template
-				title: "Transaction",
-				data: rows
-				//dump:"No se que es"
-			});
-		});
-		
+		);
 	});
 
-	app.post("/users/dashboard/own_transactions",function(req, res){
+	app.post("/users/dashboard/own_transactions", function(req, res) {
 		function addZero(i) {
-	    	if (i < 10) {
-	        	i = '0' + i;
-	    	}
-	    	return i;
+			if (i < 10) {
+				i = "0" + i;
+			}
+			return i;
 		}
 		function get_Date() {
-    		var today = new Date();
-        	var dd = today.getDate();
-        	var mm = today.getMonth()+1;
-        	var yyyy = today.getFullYear();
-        
-        	dd = addZero(dd);
-        	mm = addZero(mm);
- 
-        	return dd+'-'+mm+'-'+yyyy;
+			var today = new Date();
+			var dd = today.getDate();
+			var mm = today.getMonth() + 1;
+			var yyyy = today.getFullYear();
+
+			dd = addZero(dd);
+			mm = addZero(mm);
+
+			return dd + "-" + mm + "-" + yyyy;
 		}
 		originAcc: req.body.originAcc;
 		destinAcc: req.body.destinationAcc;
@@ -795,45 +798,82 @@ module.exports = function(app, passport) {
 			}
 		}
 	});
+	// =====================================
+	// SECTION:Reset new Password
+	// =====================================
 
 	// =====================================
 	// SECTION:Tokens Validations
 	// =====================================
-	app.get("/reset/:token", function(req, res) {
+	app.get("/users/reset/:token", function(req, res) {
 		TokenQuery = "select * from user where Token=?;";
-		connection.query(TokenQuery, [token], function(err, rows) {
+		connection.query(TokenQuery, [req.params.token], function(err, rows) {
 			if (err) {
 				console.log("There was a problem meanwhile doing the Query");
 				req.flash(
 					"message",
 					"There was a problem while processing your request"
 				);
-			} else if (rows == null || rows.length == 0) {
-				console.log("Password reset token is invalid or has expired."); //debug
-				return res.redirect("/users/password_recovery", {
-					message: "Password reset token is invalid or has expired."
-				});
-			} else {
-				res.render("/users/reset", { user: rows[0] });
 			}
+			console.log(rows);
+			if (rows == null || rows.length == 0) {
+				console.log("Password reset token is invalid or has expired."); //debug
+				return res.redirect("/users/password_recovery");
+			}
+			console.log(req.user);
+			res.render("./user/token_password", {
+				title: "Reset Password",
+				token: req.params.token
+			});
 		});
 	});
 
-	// =====================================
-	// SECTION:Tokens Validations
-	// =====================================
-	app.post("/reset/:token", function(req, res) {
-		console.log("To Be implemented");
-	});
+	app.post("/users/reset/:token", function(req, res) {
+		console.log(req.params.token);
+		console.log(req.body);
+		TokenQuery = "select * from user where Token=?;";
+		connection.query(TokenQuery, [req.params.token], function(err, rows) {
+			if (err) {
+				console.log("There was a problem meanwhile doing the Query");
+				req.flash(
+					"message",
+					"There was a problem while processing your request"
+				);
+			}
+			console.log("Token Hallado");
+			console.log(rows);
+			var userid = rows[0].id;
+			if (rows == null || rows.length == 0) {
+				console.log("Password reset token is invalid or has expired."); //debug
+				return res.redirect("/users/password_recovery");
+			}
 
-	// =====================================
-	// SECTION:Reset new Password
-	// =====================================
-	app.get("/users/reset", function(req, res) {
-		res.render("./user/token_password", {
-			//add more logic here!
-			user: req.user, // get the user out of session and pass to template
-			title: "Reset Password"
+			data = {
+				newPass: req.body.newpassword,
+				confirmPass: req.body.confirmpassword
+			};
+
+			if (data.newPass === data.confirmPass) {
+				var newPassCryp = bcrypt.hashSync(data.newPass, null, null);
+				updateQuery = "UPDATE user SET password=? WHERE id=?;";
+				connection.query(updateQuery, [newPassCryp, userid], function(
+					err,
+					row
+				) {
+					if (err) {
+						console.log("Wrong Query in Current Database");
+						throw err;
+					} else {
+						console.log("----Password Updated----");
+						res.redirect("/users/login");
+						//req.flash("UpdatedPass", "The password was updated");
+					}
+				});
+			} else {
+				console.log("----NotMatchPass----"); //debug
+				res.redirect("/users/password_recovery");
+				//req.flash("NotMatchPass", "The current password does not match");
+			}
 		});
 	});
 
@@ -978,17 +1018,19 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION: DELETE BUDGET
 	// =====================================
-	app.post("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
+	app.post("/users/dashboard/accounts/budget", isLoggedIn, function(
+		req,
+		res
+	) {
 		var budget = req.body.budget;
 		var user = req.user.id;
 
-		deleteQuery=
-			"DELETE FROM budget WHERE id=? AND name_budget=?;";
-		connection.query(deleteQuery,[user,budget],function(err,rows) {
-			if(err){
+		deleteQuery = "DELETE FROM budget WHERE id=? AND name_budget=?;";
+		connection.query(deleteQuery, [user, budget], function(err, rows) {
+			if (err) {
 				console.log("Wrong Delete of budget");
-                //req.flash('message', 'Impossible to Delete Budget');
-                throw err;
+				//req.flash('message', 'Impossible to Delete Budget');
+				throw err;
 			}
 		});
 
