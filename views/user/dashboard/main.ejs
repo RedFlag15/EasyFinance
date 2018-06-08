@@ -37,7 +37,7 @@
             <div class="container-fluid">
                 <!-- Start Page Content -->
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="#" onclick="document.getElementById('coin').style.display='block'">
                         <div class="card p-30">
                             <div class="media">
@@ -52,7 +52,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="/users/dashboard/add_account">
                         <div class="card p-30">
                             <div class="media">
@@ -67,7 +67,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="/users/dashboard/create_budget">
                         <div class="card p-30">
                             <div class="media">
@@ -82,7 +82,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="/users/dashboard/accounts/groups">
                         <div class="card p-30">
                             <div class="media">
@@ -97,7 +97,7 @@
                         </div>
                         </a>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <a href="#" onclick="document.getElementById('totransactions').style.display='block'">
                         <div class="card p-30">
                             <div class="media">
@@ -112,16 +112,31 @@
                         </div>
                         </a>
                     </div>
+                    <div class="col-md-4">
+                        <a href="/users/logout" onclick="return confirm('Are you sure?')">
+                        <div class="card p-30">
+                            <div class="media">
+                                <div class="media-left meida media-middle">
+                                    <span><i class="fa fa-power-off f-s-40 color-primary"></i></span>
+                                </div>
+                                <div class="media-body media-text-right">
+                                    <h2>Logout</h2>
+                                    <p class="m-b-0">Exit</p>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-6">
+                    <div class="col-lg-12">
                         <div class="card">
                             <div class="card-title">
-                                <h4>Echart</h4>
+                                <h4>Accounts balance</h4>
                             </div>
                             <div class="card-content">
-                                
+                                    <svg id="chart" class="chart-container"></svg>
                             </div>
                         </div>
                     </div>
