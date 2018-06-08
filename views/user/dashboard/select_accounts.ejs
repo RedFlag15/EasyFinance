@@ -67,8 +67,6 @@
                                 <% } %>
                             </table>
                             
-
-
                             <label class="control-label">Currrent Accounts</label>
                             <table>
                                 <tr>
@@ -80,11 +78,13 @@
                                         <tr>
                                         <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
                                         <td><strong>$</strong> <%=results[i].balanceAcc%></td>
-                                        <td style="border=0px"><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
                                     </tr>    
                                     <% } %>
                                 <% } %>
                             </table>
+
+                            
                             <br>
                             <button type="submit" class="btn btn-primary">Sync</button>
                             <a href="/users/dashboard/add_account"><button class="btn btn-secondary">Cancel</button></a>

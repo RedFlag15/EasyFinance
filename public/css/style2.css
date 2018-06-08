@@ -5427,6 +5427,9 @@ tbody tr td:last-child {
 .table {
   margin-bottom: 0;
 }
+
+
+
 .table .badge {
   text-transform: uppercase;
 }
@@ -7002,10 +7005,14 @@ table {
   font-family:  'Open Sans', sans-serif;
   border-collapse: collapse;
   width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
 }
 
 td, th {
-  border: 1px solid rgb(172, 228, 240);
-  text-align: center;
+  border-bottom: 1px solid rgb(172, 228, 240);
+  text-align: left;
   padding: 8px;
 }
+
+tr:hover {background-color: #f5f5f5;}
