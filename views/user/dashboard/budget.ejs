@@ -59,7 +59,7 @@
                                         <td><%=data[i].name_budget%></td>
                                         <td><%=data[i].totalAmount_budget%></td>
                                         <td><%=data[i].name_currency%></td>                                  
-                                        <td><button class="btn btn-primary btn-flat" onclick="deleteAcc(this)">Delete</button></td>
+                                        <td><button class="btn btn-primary btn-flat" onclick="deleteBud(this)">Delete</button></td>
                                     </tr>
                                     <% } %>
                                 <% } %>
@@ -70,7 +70,9 @@
                 </div>
             </div>
             <% include ./../../partials/dashboard/transfer %>
-            <% include ./../../partials/dashboard/deleteform %>
+            <form id="confirmDelete" method="post" action="">
+                <input type="hidden" id="budgetName" name="budget" value="">
+            </form>
             <!-- End Container fluid  -->
             <!-- footer -->
             

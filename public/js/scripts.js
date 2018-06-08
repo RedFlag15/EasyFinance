@@ -129,3 +129,5 @@ $(function() {
             $(this).closest(".card").removeClass().slideUp("fast");
         });
 });
+
+
