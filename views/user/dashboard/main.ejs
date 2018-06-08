@@ -159,7 +159,7 @@
     var seedData = [
     <% for(let i = 0; i < balances.length; i++) { %>
     {
-        label:"<%=i%>", 
+        label:"<%=balancename[i]%>", 
         value:<%= balances[i]%>, 
         link: "/users/dashboard/"
     },

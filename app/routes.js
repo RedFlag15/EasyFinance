@@ -16,6 +16,7 @@ const path = require("path");
 const express = require("express");
 const app = express();
 const moment = require("moment");
+const formatCurrency = require("format-currency");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -127,12 +128,14 @@ module.exports = function(app, passport) {
 			}
 			console.log(rows); //debug
 			var urilist = [];
+			var balancename = [];
 			var balance = [];
 			for (let i = 0; i < rows.length; i++) {
 				var uribase =
 					"http://apibank.herokuapp.com/balance/" +
 					rows[i].number_acc;
 				urilist.push(uribase);
+				balancename.push(rows[i].number_acc);
 				console.log(uribase); //debug
 			}
 
@@ -141,14 +144,20 @@ module.exports = function(app, passport) {
 				console.log(resc.getBody("utf-8")); //debug
 				balance.push(resc.getBody("utf-8"));
 			}
+			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+
 			console.log(balance.map(Number).reduce(getSumBalance)); //debug
 			console.log("-----------"); //debug
 			console.log(req.user); //debug
 			res.render("./user/dashboard/main", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
-				balancev: balance.map(Number).reduce(getSumBalance),
-				balances: balance.map(Number)
+				balancev: formatCurrency(
+					balance.map(Number).reduce(getSumBalance),
+					opts
+				),
+				balances: balance.map(Number),
+				balancename: balancename
 			});
 		});
 	});
@@ -326,10 +335,12 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
+			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				console.log(resc.getBody("utf-8")); //debug
-				balance.push(resc.getBody("utf-8"));
+				balance.push(formatCurrency(resc.getBody("utf-8"), opts));
 			}
 			console.log("-----------"); //debug
 			console.log(req.user); //debug
@@ -431,10 +442,12 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
+			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				console.log(resc.getBody("utf-8"));
-				balance.push(resc.getBody("utf-8"));
+				balance.push(formatCurrency(resc.getBody("utf-8"), opts));
 			}
 			res.render("./user/dashboard/current", {
 				//add more logic here!
@@ -534,10 +547,11 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
+			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				//console.log(resc.getBody("utf-8"));
-				balance.push(resc.getBody("utf-8"));
+				balance.push(formatCurrency(resc.getBody("utf-8"), opts));
 			}
 			res.render("./user/dashboard/savings", {
 				//add more logic here!
@@ -997,10 +1011,11 @@ module.exports = function(app, passport) {
 					rows[i].number_acc;
 				urilist.push(uribase);
 			}
+			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
 			for (let i = 0; i < urilist.length; i++) {
 				var resc = requests("GET", urilist[i]);
 				//console.log(resc.getBody("utf-8"));
-				balance.push(resc.getBody("utf-8"));
+				balance.push(formatCurrency(resc.getBody("utf-8"), opts));
 			}
 
 			function numberTypeAcc(user, typeAcc, array, cb) {
