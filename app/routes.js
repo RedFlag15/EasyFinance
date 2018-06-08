@@ -3,13 +3,12 @@ const request = require("request");
 var requests = require("sync-request"); //testing
 const crypto = require("crypto");
 const async = require("async");
-var flash = require('express-flash');
+var flash = require("express-flash");
 const nodemailer = require("nodemailer");
 var bcrypt = require("bcrypt-nodejs");
 const dbconfig = require("../config/database");
 const connection = mysql.createConnection(dbconfig.connection);
 connection.query("USE " + dbconfig.database);
-
 const multipart = require("connect-multiparty");
 const multipartMiddleware = multipart();
 const fs = require("fs");
@@ -17,6 +16,42 @@ const path = require("path");
 const express = require("express");
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
+
+// =====================================
+// FUNCTION HELPERS:
+// =====================================
+// AVOID TO SEARCH AND FIND IN THE DATABASE
+function banklist(name) {
+	list = {
+		BANCOLOMBIA: 1,
+		"BANCO AGRARIO": 2,
+		"BANCO AV VILLAS": 3,
+		"BANCO CAJA SOCIAL": 4,
+		"BANCO COLPATRIA": 5,
+		"BANCO COMPARTIR S.A.": 6,
+		"BANCO COOPERATIVO COOPCENTRAL": 7,
+		"BANCO DAVIVIENDA": 8,
+		"BANCO DE BOGOTÁ": 9,
+		"BANCO DE OCCIDENTE": 10,
+		"BANCO FALABELLA S.A.": 11,
+		"BANCO FINANDINA S.A.": 12,
+		"BANCO GNB COLOMBIA S.A": 13,
+		"BANCO GNB SUDAMERIS": 14,
+		"BANCO MULTIBANK S.A": 15,
+		"BANCO PICHINCHA": 16,
+		"BANCO POPULAR": 17,
+		"BANCO PROCREDIT": 18,
+		"BANCO SANTANDER DE NEGOCIOS": 19,
+		"BANCO W S.A": 20,
+		BANCOOMEVA: 21,
+		BBVA: 22,
+		CITIBANK: 23,
+		"COLTEFINANCIERA S.A.": 24,
+		CONFIAR: 25
+	};
+	return list[name];
+}
+
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
@@ -117,31 +152,127 @@ module.exports = function(app, passport) {
 			pin_password;
 		var resc = requests("GET", uribase);
 		data = JSON.parse(resc.getBody("utf-8"), true);
-		console.log(resc.getBody("utf-8"));
+		console.log(resc.getBody("utf-8")); //debug
 		res.render("./user/dashboard/select_accounts", {
 			title: "Sync Account",
 			results: data.account
 		});
-
-
+	});
+	app.post("/users/dashboard/account/sync_process", isLoggedIn, function(
+		req,
+		res
+	) {
+		var selectedaccount = [];
+		var data = req.body;
+		console.log(data); //debug
+		var datalen = Object.keys(data).length;
+		console.log(datalen); //debug
+		for (var key in data) {
+			console.log(data[key] + " is " + key);
+			//split
+			selectedaccount = data[key].split(",");
+			console.log(selectedaccount);
+			if (selectedaccount[2] === "credit") {
+				console.log("Credit");
+				insertCreditQuery =
+					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
+				console.log(banklist[selectedaccount[0]]);
+				console.log(req.user.id);
+				console.log(selectedaccount[1]);
+				console.log(selectedaccount[2]);
+				connection.query(
+					insertCreditQuery,
+					[
+						banklist(selectedaccount[0]),
+						req.user.id,
+						1,
+						selectedaccount[1],
+						true,
+						"10/20",
+						selectedaccount[2]
+					],
+					function(err, rows) {
+						if (err) {
+							console.log(
+								"Wrong Insertion in Database something went wrong"
+							);
+							throw err;
+						}
+						console.log("Insert Done"); //debug
+						console.log(rows); //debug
+					}
+				);
+			} else if (selectedaccount[2] === "saving") {
+				console.log("Saving");
+				insertCreditQuery =
+					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
+				console.log(banklist[selectedaccount[0]]);
+				console.log(req.user.id);
+				console.log(selectedaccount[1]);
+				console.log(selectedaccount[2]);
+				connection.query(
+					insertCreditQuery,
+					[
+						banklist(selectedaccount[0]),
+						req.user.id,
+						1,
+						selectedaccount[1],
+						true,
+						"10/20",
+						selectedaccount[2]
+					],
+					function(err, rows) {
+						if (err) {
+							console.log(
+								"Wrong Insertion in Database something went wrong"
+							);
+							throw err;
+						}
+						console.log("Insert Done"); //debug
+						console.log(rows); //debug
+					}
+				);
+			} else {
+				console.log("Current");
+				insertCreditQuery =
+					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
+				console.log(banklist[selectedaccount[0]]);
+				console.log(req.user.id);
+				console.log(selectedaccount[1]);
+				console.log(selectedaccount[2]);
+				connection.query(
+					insertCreditQuery,
+					[
+						banklist(selectedaccount[0]),
+						req.user.id,
+						1,
+						selectedaccount[1],
+						true,
+						"10/20",
+						selectedaccount[2]
+					],
+					function(err, rows) {
+						if (err) {
+							console.log(
+								"Wrong Insertion in Database something went wrong"
+							);
+							throw err;
+						}
+						console.log("Insert Done"); //debug
+						console.log(rows); //debug
+					}
+				);
+			}
+		} //end for
+		res.redirect("/users/dashboard"); //we finish the syncing...we need to check how to render, credit, saving, and current in a good manner
 	});
 
-	app.get("/users/dashboard/transactions", isLoggedIn, function(req,res){
+	app.get("/users/dashboard/transactions", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/transactions", {
 			title: "Sync Account",
-			data:"NOSE QUE ES"
+			data: "NOSE QUE ES"
 		});
-	})
-	app.post("/users/dashboard/account/sync_process",isLoggedIn,function(req,res){
-		var data = req.body;
-		console.log(data);	 //debug 
-		var datalen= Object.keys(data).length
-		console.log(datalen);	 //debug 
-		for (var i=0; i<=datalen; i++) {
-			console.log(data[0]);
-		}
-
-	})
+	});
 
 	// =====================================
 	// SECTION:CREDIT
@@ -172,16 +303,16 @@ module.exports = function(app, passport) {
 				console.log(resc.getBody("utf-8")); //debug
 				balance.push(resc.getBody("utf-8"));
 			}
-			console.log('-----------');
-			console.log(req.user)
+			console.log("-----------");
+			console.log(req.user);
 			res.render("./user/dashboard/credit", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
 				dump: "Credit",
 				title: "Credit Accounts",
 				data: rows,
-				balances: balance, 
-				message:""
+				balances: balance,
+				message: ""
 			});
 		});
 	});
@@ -190,51 +321,61 @@ module.exports = function(app, passport) {
 		req,
 		res
 	) {
-
-		var bankname =req.body.bank;
-		async.waterfall([
-		    async.apply(findBankID, bankname),
-		    async.apply(deleteAccount, req),
-		], function (err, result) {
-		    console.log(result)	//debug
-		    res.redirect('/users/dashboard/accounts/credit');
-		});
+		var bankname = req.body.bank;
+		async.waterfall(
+			[
+				async.apply(findBankID, bankname),
+				async.apply(deleteAccount, req)
+			],
+			function(err, result) {
+				console.log(result); //debug
+				res.redirect("/users/dashboard/accounts/credit");
+			}
+		);
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');	//debug
-		    console.log(bankname);	//debug
-		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
-		    connection.query(BankIDQuery, [bankname], function(err, rows){
-		        if(err){
-		            console.log('There was a problem meanwhile doing the Query');
-		            callback(null, '');
-		        }
-		        if(rows!==null){
-		            console.log(rows);
-		            callback(null, rows[0].id_bank);
-		        }
-		        else{
-		            console.log('No existe ese token');	//debug
-		            console.log(rows);
-		            callback(null, null);   
-		        }
-		    });
-		    
+			console.log("Step 1:::Find BANK"); //debug
+			console.log(bankname); //debug
+			BankIDQuery = "SELECT id_bank FROM bank where name_bank=?;";
+			connection.query(BankIDQuery, [bankname], function(err, rows) {
+				if (err) {
+					console.log(
+						"There was a problem meanwhile doing the Query"
+					);
+					callback(null, "");
+				}
+				if (rows !== null) {
+					console.log(rows);
+					callback(null, rows[0].id_bank);
+				} else {
+					console.log("No existe ese token"); //debug
+					console.log(rows);
+					callback(null, null);
+				}
+			});
 		}
 
-		function deleteAccount(req,rows, callback) {
-		    console.log('Step 2 Reset Password');	//debug
-		    console.log(req.user.id,req.body.anumber,req.body.bank);	//debug
-		    console.log(rows);	//debug
-		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
-			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"credit"],function(err,rows){
-				if(err){
-					console.log('Wrong delete for Credit');
-	                req.flash('message', 'Impossible to Delete Credit Account');
-	                res.redirect('/users/dashboard/accounts/credit');
+		function deleteAccount(req, rows, callback) {
+			console.log("Step 2 Reset Password"); //debug
+			console.log(req.user.id, req.body.anumber, req.body.bank); //debug
+			console.log(rows); //debug
+			deleteQuery =
+				"DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(
+				deleteQuery,
+				[req.user.id, rows, req.body.anumber, "credit"],
+				function(err, rows) {
+					if (err) {
+						console.log("Wrong delete for Credit");
+						req.flash(
+							"message",
+							"Impossible to Delete Credit Account"
+						);
+						res.redirect("/users/dashboard/accounts/credit");
+					}
+					callback(null, "done");
 				}
-			    callback(null, 'done');
-			});
+			);
 		}
 	});
 	// =====================================
@@ -284,51 +425,61 @@ module.exports = function(app, passport) {
 		req,
 		res
 	) {
-
-		var bankname =req.body.bank;
-		async.waterfall([
-		    async.apply(findBankID, bankname),
-		    async.apply(deleteAccount, req),
-		], function (err, result) {
-		    console.log(result)
-		    res.redirect('/users/dashboard/accounts/credit');
-		});
+		var bankname = req.body.bank;
+		async.waterfall(
+			[
+				async.apply(findBankID, bankname),
+				async.apply(deleteAccount, req)
+			],
+			function(err, result) {
+				console.log(result);
+				res.redirect("/users/dashboard/accounts/credit");
+			}
+		);
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');	//debug
-		    console.log(bankname);	//debug
-		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
-		    connection.query(BankIDQuery, [bankname], function(err, rows){
-		        if(err){
-		            console.log('There was a problem meanwhile doing the Query');
-		            callback(null, '');
-		        }
-		        if(rows!==null){
-		            console.log(rows);	//debug
-		            callback(null, rows[0].id_bank);
-		        }
-		        else{
-		            console.log('No existe ese token');
-		            console.log(rows);	//debug
-		            callback(null, null);   
-		        }
-		    });
-		    
+			console.log("Step 1:::Find BANK"); //debug
+			console.log(bankname); //debug
+			BankIDQuery = "SELECT id_bank FROM bank where name_bank=?;";
+			connection.query(BankIDQuery, [bankname], function(err, rows) {
+				if (err) {
+					console.log(
+						"There was a problem meanwhile doing the Query"
+					);
+					callback(null, "");
+				}
+				if (rows !== null) {
+					console.log(rows); //debug
+					callback(null, rows[0].id_bank);
+				} else {
+					console.log("No existe ese token");
+					console.log(rows); //debug
+					callback(null, null);
+				}
+			});
 		}
 
-		function deleteAccount(req,rows, callback) {
-		    console.log('Step 2 Reset Password');
-		    console.log(req.user.id,req.body.anumber,req.body.bank);	//debug
-		    console.log(rows);	//debug
-		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
-			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"current"],function(err,rows){
-				if(err){
-					console.log('Wrong delete for Credit')
-	                req.flash('message', 'Impossible to Delete Credit Account');
-	                res.redirect('/users/dashboard/accounts/current');
+		function deleteAccount(req, rows, callback) {
+			console.log("Step 2 Reset Password");
+			console.log(req.user.id, req.body.anumber, req.body.bank); //debug
+			console.log(rows); //debug
+			deleteQuery =
+				"DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(
+				deleteQuery,
+				[req.user.id, rows, req.body.anumber, "current"],
+				function(err, rows) {
+					if (err) {
+						console.log("Wrong delete for Credit");
+						req.flash(
+							"message",
+							"Impossible to Delete Credit Account"
+						);
+						res.redirect("/users/dashboard/accounts/current");
+					}
+					callback(null, "done");
 				}
-			    callback(null, 'done');
-			});
+			);
 		}
 	});
 
@@ -338,7 +489,7 @@ module.exports = function(app, passport) {
 	app.get("/users/dashboard/accounts/savings", isLoggedIn, function(
 		req,
 		res
-	) {	
+	) {
 		var selectQuery =
 			"SELECT name_bank, number_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id AND account.type_acc=?;";
 		connection.query(selectQuery, [req.user.id, "saving"], function(
@@ -379,51 +530,62 @@ module.exports = function(app, passport) {
 		req,
 		res
 	) {
-		console.log(req.body);	//debug
-		var bankname =req.body.bank;
-		async.waterfall([
-		    async.apply(findBankID, bankname),
-		    async.apply(deleteAccount, req),
-		], function (err, result) {
-		    console.log(result)
-		    res.redirect('/users/dashboard/accounts/savings');
-		});
+		console.log(req.body); //debug
+		var bankname = req.body.bank;
+		async.waterfall(
+			[
+				async.apply(findBankID, bankname),
+				async.apply(deleteAccount, req)
+			],
+			function(err, result) {
+				console.log(result);
+				res.redirect("/users/dashboard/accounts/savings");
+			}
+		);
 
 		function findBankID(bankname, callback) {
-		    console.log('Step 1:::Find BANK');	//debug
-		    console.log(bankname);	//debug
-		    BankIDQuery ="SELECT id_bank FROM bank where name_bank=?;"
-		    connection.query(BankIDQuery, [bankname], function(err, rows){
-		        if(err){
-		            console.log('There was a problem meanwhile doing the Query');
-		            callback(null, '');
-		        }
-		        if(rows!==null){
-		            console.log(rows);	//debug
-		            callback(null, rows[0].id_bank);
-		        }
-		        else{
-		            console.log('No existe ese token');
-		            console.log(rows);	//debug
-		            callback(null, null);
-		        }
-		    });
-		    
+			console.log("Step 1:::Find BANK"); //debug
+			console.log(bankname); //debug
+			BankIDQuery = "SELECT id_bank FROM bank where name_bank=?;";
+			connection.query(BankIDQuery, [bankname], function(err, rows) {
+				if (err) {
+					console.log(
+						"There was a problem meanwhile doing the Query"
+					);
+					callback(null, "");
+				}
+				if (rows !== null) {
+					console.log(rows); //debug
+					callback(null, rows[0].id_bank);
+				} else {
+					console.log("No existe ese token");
+					console.log(rows); //debug
+					callback(null, null);
+				}
+			});
 		}
 
-		function deleteAccount(req,rows, callback) {
-		    console.log('Step 2 Reset Password');
-		    console.log(req.user.id,req.body.anumber,req.body.bank); //debug
-		    console.log(rows);	//debug
-		    deleteQuery="DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
-			connection.query(deleteQuery,[req.user.id,rows, req.body.anumber,"saving"],function(err,rows){
-				if(err){
-					console.log('Wrong delete for Credit')
-	                req.flash('message', 'Impossible to Delete Credit Account');
-	                res.redirect('/users/dashboard/accounts/savings');
+		function deleteAccount(req, rows, callback) {
+			console.log("Step 2 Reset Password");
+			console.log(req.user.id, req.body.anumber, req.body.bank); //debug
+			console.log(rows); //debug
+			deleteQuery =
+				"DELETE FROM account WHERE id=? AND id_bank=? AND number_acc=? AND type_acc=?;";
+			connection.query(
+				deleteQuery,
+				[req.user.id, rows, req.body.anumber, "saving"],
+				function(err, rows) {
+					if (err) {
+						console.log("Wrong delete for Credit");
+						req.flash(
+							"message",
+							"Impossible to Delete Credit Account"
+						);
+						res.redirect("/users/dashboard/accounts/savings");
+					}
+					callback(null, "done");
 				}
-			    callback(null, 'done');
-			});
+			);
 		}
 	});
 	// =====================================
@@ -434,7 +596,7 @@ module.exports = function(app, passport) {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Password",
-			message:""
+			message: ""
 		});
 	});
 
@@ -444,186 +606,191 @@ module.exports = function(app, passport) {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Password",
-			message:req.flash("message")
+			message: req.flash("message")
 		});
 	});
 
-	app.get("/users/dashboard/own_transactions",function(req, res){
+	app.get("/users/dashboard/own_transactions", function(req, res) {
 		res.render("./user/dashboard/own_transactions", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Transaction",
-			message:req.flash("message"), 
-			dump:"No se que es"
+			message: req.flash("message"),
+			dump: "No se que es"
 		});
 	});
 
-	app.get("/users/dashboard/other_transactions",function(req, res){
+	app.get("/users/dashboard/other_transactions", function(req, res) {
 		res.render("./user/dashboard/other_transactions", {
 			//add more logic here!
 			user: req.user, // get the user out of session and pass to template
 			title: "Transaction",
-			message:req.flash("message"), 
-			dump:"No se que es"
+			message: req.flash("message"),
+			dump: "No se que es"
 		});
 	});
 	app.post("/users/password_recovery", function(req, res, next) {
 		//Async magic happens here :) hfjs
-		async.waterfall([
-		    async.apply(searchEmail,req),
-		    createToken,
-		    storeToken,
-		    sendEmail,
-		], function (err, result) {			
-			if (err) return next(err);
-			res.redirect('/users/password_recovery_done');
-		});
-		
+		async.waterfall(
+			[async.apply(searchEmail, req), createToken, storeToken, sendEmail],
+			function(err, result) {
+				if (err) return next(err);
+				res.redirect("/users/password_recovery_done");
+			}
+		);
+
 		// =====================================
 		// HELPERS: PASSWORD RESET, THIS IS THE MY SAD CODE.
 		// =====================================
-		    
-		function searchEmail(email,callback) {
-		    console.log('Step 1');
-		    console.log(req.body);	//debug
-		    var email = req.body.email;	
-		    var queryEmail = "select * from user where username = ?";
-		    connection.query(queryEmail, [email], function(err, user){
-		        if(err){
-		            console.log('Error');
-		            throw err;
-		        }
-		        console.log(user);	//debug
-		        var resultEmail = user; 
-		        if(resultEmail.length>0){
-		          emailFound = user[0].username ;
-		        }
-		        else{
-					req.flash('message', 'No account with that email address exists.');
-		            emailFound="";
-		        }
-		        callback(null, emailFound);
-		    }); 
-		    
+
+		function searchEmail(email, callback) {
+			console.log("Step 1");
+			console.log(req.body); //debug
+			var email = req.body.email;
+			var queryEmail = "select * from user where username = ?";
+			connection.query(queryEmail, [email], function(err, user) {
+				if (err) {
+					console.log("Error");
+					throw err;
+				}
+				console.log(user); //debug
+				var resultEmail = user;
+				if (resultEmail.length > 0) {
+					emailFound = user[0].username;
+				} else {
+					req.flash(
+						"message",
+						"No account with that email address exists."
+					);
+					emailFound = "";
+				}
+				callback(null, emailFound);
+			});
 		}
 		function createToken(email, callback) {
-		    console.log('Step 2');
-		    console.log("Generar Token");
-		    if(email!==""){
-		        console.log(email);	//debug
-		        var  tmpToken = crypto.randomBytes(20).toString('hex');
-		        callback(null, tmpToken,email);
-		    }
-		    else{
-		    console.log('Booo no hay resultados,Token No se crea');
-		    // arg1 now equals 'one' and arg2 now equals 'two'
-		    callback(null, null,null);
-		    }
+			console.log("Step 2");
+			console.log("Generar Token");
+			if (email !== "") {
+				console.log(email); //debug
+				var tmpToken = crypto.randomBytes(20).toString("hex");
+				callback(null, tmpToken, email);
+			} else {
+				console.log("Booo no hay resultados,Token No se crea");
+				// arg1 now equals 'one' and arg2 now equals 'two'
+				callback(null, null, null);
+			}
 		}
 
-		function storeToken(Token,email,callback) {
-		        console.log('Step 3');	//debug
-		        console.log('Store Token');	//debug
-		        console.log(Token);	//debug
-		        console.log(email);	//debug
-		        if(Token!==null && email!==null){
-		        	var updateTokenQuery = "UPDATE user SET Token=? where username=?"
-			        connection.query(updateTokenQuery, [Token, email],function(err,status){
-			            if(err){
-			                console.log('Impossible to update Token, Database Query Error');
-			                console.log(err);	//debug
-			                callback(null,false,Token, email);
-			            }
-			            else{
-			                console.log('Token Update Success');	//debug
-			                callback(null,true,Token, email);
-			            }
-			        });
-
-		        }
-		        else{
-		        	console.log('WTF No hay token generado...shit');	//debug
-		        	callback(null,false,Token, email);
-		        }		        
+		function storeToken(Token, email, callback) {
+			console.log("Step 3"); //debug
+			console.log("Store Token"); //debug
+			console.log(Token); //debug
+			console.log(email); //debug
+			if (Token !== null && email !== null) {
+				var updateTokenQuery =
+					"UPDATE user SET Token=? where username=?";
+				connection.query(updateTokenQuery, [Token, email], function(
+					err,
+					status
+				) {
+					if (err) {
+						console.log(
+							"Impossible to update Token, Database Query Error"
+						);
+						console.log(err); //debug
+						callback(null, false, Token, email);
+					} else {
+						console.log("Token Update Success"); //debug
+						callback(null, true, Token, email);
+					}
+				});
+			} else {
+				console.log("WTF No hay token generado...shit"); //debug
+				callback(null, false, Token, email);
+			}
 		}
 
 		function sendEmail(flag, Token, email, callback) {
-		    console.log('Step 4');
-		    console.log(flag);
-		    if(flag){
-		        console.log("Sending Email :) to");	//debug
-		        console.log("*********");      //debug
-		        var smtpTransport = nodemailer.createTransport(
-		                    	"smtps://easyfinance.co@gmail.com:" +
-		                        encodeURIComponent("karminakoala2018") +
-		                        "@smtp.gmail.com:465"
-		                );
-		        var mailOptions = {
-		                        to: email,
-		                        from: "EasyFinance.co <easyfinance.co@gmail.com>",
-		                        subject: "Easyfinance.co Password Reset",
-		                        text:
-		                            "You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
-		                            "Please click on the following link, or paste this into your browser to complete the process:\n\n" +
-		                            "http://" +
-		                            req.headers.host +
-		                            "/users/reset/" +
-		                            Token +
-		                            "\n\n" +
-		                            "If you did not request this, please ignore this email and your password will remain unchanged.\nSecurity Team Easyfinance.co"
-		        };
-		        smtpTransport.sendMail(mailOptions, function(err) {
-		                        req.flash(
-		                            "message",
-		                            "An e-mail has been sent to " +
-		                                email +
-		                                " with further instructions."
-		                        );                        
-		                        if(err){
-		                            console.log("NO SE PUDO ENVIAR EL EMAIL");
-		                        }
-		                        else{
-		                            console.log("Correo  Electronico enviado con instrucciones");
-		                        }
-		                        
-		        callback(null, 'done');
-		    })}
-		    else{
-		    	req.flash('error', 'Impossible to Send the email, Try again.');
-		        //Please try again and render or if we find an  email address with 
-		        console.log("Correo  Electronico NOOO enviado con instrucciones");	//debug
-		        callback(null, 'done');	
-		    }   
+			console.log("Step 4");
+			console.log(flag);
+			if (flag) {
+				console.log("Sending Email :) to"); //debug
+				console.log("*********"); //debug
+				var smtpTransport = nodemailer.createTransport(
+					"smtps://easyfinance.co@gmail.com:" +
+						encodeURIComponent("karminakoala2018") +
+						"@smtp.gmail.com:465"
+				);
+				var mailOptions = {
+					to: email,
+					from: "EasyFinance.co <easyfinance.co@gmail.com>",
+					subject: "Easyfinance.co Password Reset",
+					text:
+						"You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n" +
+						"Please click on the following link, or paste this into your browser to complete the process:\n\n" +
+						"http://" +
+						req.headers.host +
+						"/users/reset/" +
+						Token +
+						"\n\n" +
+						"If you did not request this, please ignore this email and your password will remain unchanged.\nSecurity Team Easyfinance.co"
+				};
+				smtpTransport.sendMail(mailOptions, function(err) {
+					req.flash(
+						"message",
+						"An e-mail has been sent to " +
+							email +
+							" with further instructions."
+					);
+					if (err) {
+						console.log("NO SE PUDO ENVIAR EL EMAIL");
+					} else {
+						console.log(
+							"Correo  Electronico enviado con instrucciones"
+						);
+					}
+
+					callback(null, "done");
+				});
+			} else {
+				req.flash("error", "Impossible to Send the email, Try again.");
+				//Please try again and render or if we find an  email address with
+				console.log(
+					"Correo  Electronico NOOO enviado con instrucciones"
+				); //debug
+				callback(null, "done");
+			}
 		}
 	});
-	
+
 	// =====================================
 	// SECTION:Tokens Validations
 	// =====================================
-	app.get('/reset/:token', function(req, res) {
-		TokenQuery ="select * from user where Token=?;"
-    	connection.query(TokenQuery, [token], function(err, rows){
-	        if(err){
-	            console.log('There was a problem meanwhile doing the Query');
-	            req.flash("message","There was a problem while processing your request");
-	        }
-	        else if(rows === null || rows.length == 0){
-				console.log('Password reset token is invalid or has expired.');	//debug
-				return res.redirect('/users/password_recovery',{message:'Password reset token is invalid or has expired.'});
-	        }
-	        else {
-	        	res.render('/users/reset', {user: rows[0]});
-	        }
-  		});
-
+	app.get("/reset/:token", function(req, res) {
+		TokenQuery = "select * from user where Token=?;";
+		connection.query(TokenQuery, [token], function(err, rows) {
+			if (err) {
+				console.log("There was a problem meanwhile doing the Query");
+				req.flash(
+					"message",
+					"There was a problem while processing your request"
+				);
+			} else if (rows == null || rows.length == 0) {
+				console.log("Password reset token is invalid or has expired."); //debug
+				return res.redirect("/users/password_recovery", {
+					message: "Password reset token is invalid or has expired."
+				});
+			} else {
+				res.render("/users/reset", { user: rows[0] });
+			}
+		});
 	});
 
 	// =====================================
 	// SECTION:Tokens Validations
 	// =====================================
-	app.post('/reset/:token', function(req, res) {
-		console.log('To Be implemented');
-
+	app.post("/reset/:token", function(req, res) {
+		console.log("To Be implemented");
 	});
 
 	// =====================================
@@ -641,8 +808,9 @@ module.exports = function(app, passport) {
 	// SECTION:BUDGETS
 	// =====================================
 	app.get("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
-		var selectQuery = "SELECT name_bank, number_acc, type_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id;";
-		connection.query(selectQuery, [req.user.id], function (err, rows) {
+		var selectQuery =
+			"SELECT name_bank, number_acc, type_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id;";
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
@@ -664,11 +832,15 @@ module.exports = function(app, passport) {
 			}
 
 			function numberTypeAcc(user, typeAcc, array, cb) {
-				var queryCount = "SELECT COUNT(*) AS numberAcc FROM account WHERE account.id=? AND type_acc=?;";
-				connection.query(queryCount, [user, typeAcc], function (err, row) {
+				var queryCount =
+					"SELECT COUNT(*) AS numberAcc FROM account WHERE account.id=? AND type_acc=?;";
+				connection.query(queryCount, [user, typeAcc], function(
+					err,
+					row
+				) {
 					if (err) {
-					console.log("Wrong Query in Current Database");
-					return cb(err);
+						console.log("Wrong Query in Current Database");
+						return cb(err);
 					}
 					array.push(row[0].numberAcc);
 					return cb(null);
@@ -695,12 +867,12 @@ module.exports = function(app, passport) {
 			res.render("./user/dashboard/create_budget", {
 				user: req.user, // get the user out of session and pass to template
 				data: rows,
-				balances: balance,
+				balances: balance
 				//credit: numberAccounts[0],
 				//current: numberAccounts[1],
 				//saving: numberAccounts[2]
 			});
-		})
+		});
 	});
 
 	// =====================================
@@ -708,15 +880,16 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.post("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
 		var properties = Object.keys(req.body);
-		var values = Object.values(req.body)
+		var values = Object.values(req.body);
 		console.log(properties);
-		
+
 		nameBudget = req.body.nameBudget;
 		amount = req.body.money;
 		currency = req.body.currency;
 
-		var queryCount = "SELECT COUNT(type_acc) AS numberAcc FROM account WHERE account.id=?;";
-		connection.query(queryCount, [req.user.id], function (err, rows) {
+		var queryCount =
+			"SELECT COUNT(type_acc) AS numberAcc FROM account WHERE account.id=?;";
+		connection.query(queryCount, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
@@ -726,31 +899,45 @@ module.exports = function(app, passport) {
 			var accountsBudget = [];
 			for (let i = 0; i < properties.length; i++) {
 				for (let j = 0; j < rows[0].numberAcc; j++) {
-					if(properties[i] === "accCredit".concat(j) ||
+					if (
+						properties[i] === "accCredit".concat(j) ||
 						properties[i] === "accCurrent".concat(j) ||
-						properties[i] === "accSaving".concat(j)) {
+						properties[i] === "accSaving".concat(j)
+					) {
 						accountsBudget.push(values[i]);
 					}
 				}
 			}
 
-			var insertBudget = "INSERT INTO budget (id, id_currency, name_budget, type_budget, recurrency_budget, totalAmount_budget) VALUES (?, ?, ?, ?, ?, ?);";
+			var insertBudget =
+				"INSERT INTO budget (id, id_currency, name_budget, type_budget, recurrency_budget, totalAmount_budget) VALUES (?, ?, ?, ?, ?, ?);";
 
-			connection.query(insertBudget, [req.user.id,currency,nameBudget,nameBudget,0,amount], function(err,rows) {
-				if (err) {
-					console.log("Wrong Query in Current Database");
-					throw err;
-				}
-				var insertAccBudget = "INSERT INTO itemBudget (id_budget, id_acc) VALUES ((SELECT id_budget FROM budget WHERE name_budget=?),(SELECT id_acc FROM account WHERE number_acc=?));"
-				for (let i = 0; i < accountsBudget.length; i++) {
-					connection.query(insertAccBudget, [nameBudget, accountsBudget[i]], function(err,rows) {
-						if (err) {
-							console.log("Wrong Query in Current Database");
+			connection.query(
+				insertBudget,
+				[req.user.id, currency, nameBudget, nameBudget, 0, amount],
+				function(err, rows) {
+					if (err) {
+						console.log("Wrong Query in Current Database");
 						throw err;
-						}
-					});
+					}
+					var insertAccBudget =
+						"INSERT INTO itemBudget (id_budget, id_acc) VALUES ((SELECT id_budget FROM budget WHERE name_budget=?),(SELECT id_acc FROM account WHERE number_acc=?));";
+					for (let i = 0; i < accountsBudget.length; i++) {
+						connection.query(
+							insertAccBudget,
+							[nameBudget, accountsBudget[i]],
+							function(err, rows) {
+								if (err) {
+									console.log(
+										"Wrong Query in Current Database"
+									);
+									throw err;
+								}
+							}
+						);
+					}
 				}
-			});
+			);
 		});
 
 		res.redirect("/users/dashboard/accounts/budget");
@@ -760,13 +947,14 @@ module.exports = function(app, passport) {
 	// SECTION: SHOW BUDGET
 	// =====================================
 	app.get("/users/dashboard/accounts/budget", isLoggedIn, function(req, res) {
-		var selectQuery = "SELECT name_budget, totalAmount_budget, name_currency FROM budget, currency WHERE budget.id=? AND budget.id_currency=currency.id_currency;";
-		connection.query(selectQuery, [req.user.id], function(err,rows) {
+		var selectQuery =
+			"SELECT name_budget, totalAmount_budget, name_currency FROM budget, currency WHERE budget.id=? AND budget.id_currency=currency.id_currency;";
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
 			if (err) {
 				console.log("Wrong Query in Current Database");
-			throw err;
+				throw err;
 			}
-			
+
 			res.render("./user/dashboard/budget", {
 				user: req.user, // get the user out of session and pass to template
 				dump: "Budgets",
@@ -792,7 +980,7 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
 		res.render("./user/dashboard/group_accounts", {
-			user: req.user, // get the user out of session and pass to template
+			user: req.user // get the user out of session and pass to template
 		});
 	});
 
@@ -883,7 +1071,11 @@ module.exports = function(app, passport) {
 			req.user.id +
 			path.extname(oldpath).toLowerCase();
 
-		if (extension === "jpg" || extension === "jpeg" || extension === "png") {
+		if (
+			extension === "jpg" ||
+			extension === "jpeg" ||
+			extension === "png"
+		) {
 			fs.readFile(oldpath, function(err, dataImg) {
 				if (err) {
 					console.log(`Error uploading picture: ${err}`);
@@ -953,27 +1145,30 @@ module.exports = function(app, passport) {
 			newPass: req.body.newpassword,
 			confirmPass: req.body.confirmpassword
 		};
-		var passQuery = 
-			"SELECT password FROM user WHERE id=?;";
+		var passQuery = "SELECT password FROM user WHERE id=?;";
 		connection.query(passQuery, [req.user.id], function(err, rows) {
-			if(err) {
+			if (err) {
 				console.log("Wrong Query in Current Database");
 				throw err;
 			}
 
-			if(rows.length > 0) { 
-				if(bcrypt.compareSync(data.oldPass, rows[0].password)) {
+			if (rows.length > 0) {
+				if (bcrypt.compareSync(data.oldPass, rows[0].password)) {
 					var newPassCryp = bcrypt.hashSync(data.newPass, null, null);
 					updateQuery = "UPDATE user SET password=? WHERE id=?;";
-					connection.query(updateQuery, [newPassCryp, req.user.id], function(err, row) {
-						if(err) {
-							console.log("Wrong Query in Current Database");
-							throw err;
-						} else {
-							console.log("----Password Updated----");
-							//req.flash("UpdatedPass", "The password was updated");
+					connection.query(
+						updateQuery,
+						[newPassCryp, req.user.id],
+						function(err, row) {
+							if (err) {
+								console.log("Wrong Query in Current Database");
+								throw err;
+							} else {
+								console.log("----Password Updated----");
+								//req.flash("UpdatedPass", "The password was updated");
+							}
 						}
-					});
+					);
 				} else {
 					console.log("----NotMatchPass----");
 					//req.flash("NotMatchPass", "The current password does not match");
