@@ -55,6 +55,7 @@ function banklist(name) {
 module.exports = function(app, passport) {
 	// EASYFINANCE.CO APPLICATION, UTP 2018.
 	// easyfinance.co@gmail.com
+
 	// =====================================
 	// SECTION:HOME PAGE, LANDING
 	// =====================================
@@ -65,6 +66,7 @@ module.exports = function(app, passport) {
 	app.get("/users/", function(req, res) {
 		res.redirect("/users/login");
 	});
+
 	// =====================================
 	// SECTION:LOGIN
 	// =====================================
@@ -94,7 +96,6 @@ module.exports = function(app, passport) {
 		});
 	});
 
-	// process the signup form
 	app.post(
 		"/users/signup",
 		passport.authenticate("local-signup", {
@@ -108,12 +109,13 @@ module.exports = function(app, passport) {
 	// SECTION:DASHBOARD SECTION
 	// =====================================
 	app.get("/users/dashboard", isLoggedIn, function(req, res) {
-		//carga parcial de datos de usuario balances, foto de perfil....etc
+		//Agregar las consultas de balances, imagen de perfil
 		res.render("./user/dashboard/main", {
 			//add more logic here!
 			user: req.user // get the user out of session and pass to template
 		});
 	});
+
 	// =====================================
 	// SECTION:ACCOUNT
 	// =====================================
@@ -136,7 +138,6 @@ module.exports = function(app, passport) {
 	});
 
 	app.post("/users/dashboard/sync_bank", isLoggedIn, function(req, res) {
-		//user details submitted
 		var id_persona = req.body.idUser;
 		var bank_name = req.body.bank;
 		var pin_password = req.body.pin_password;
@@ -168,18 +169,17 @@ module.exports = function(app, passport) {
 		var datalen = Object.keys(data).length;
 		console.log(datalen); //debug
 		for (var key in data) {
-			console.log(data[key] + " is " + key);
-			//split
+			console.log(data[key] + " is " + key); //debug
 			selectedaccount = data[key].split(",");
-			console.log(selectedaccount);
+			console.log(selectedaccount); //debug
 			if (selectedaccount[2] === "credit") {
 				console.log("Credit");
 				insertCreditQuery =
 					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
-				console.log(banklist[selectedaccount[0]]);
-				console.log(req.user.id);
-				console.log(selectedaccount[1]);
-				console.log(selectedaccount[2]);
+				console.log(banklist[selectedaccount[0]]); //debug
+				console.log(req.user.id); //debug
+				console.log(selectedaccount[1]); //debug
+				console.log(selectedaccount[2]); //debug
 				connection.query(
 					insertCreditQuery,
 					[
@@ -206,10 +206,10 @@ module.exports = function(app, passport) {
 				console.log("Saving");
 				insertCreditQuery =
 					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
-				console.log(banklist[selectedaccount[0]]);
-				console.log(req.user.id);
-				console.log(selectedaccount[1]);
-				console.log(selectedaccount[2]);
+				console.log(banklist[selectedaccount[0]]); //debug
+				console.log(req.user.id); //debug
+				console.log(selectedaccount[1]); //debug
+				console.log(selectedaccount[2]); //debug
 				connection.query(
 					insertCreditQuery,
 					[
@@ -236,10 +236,10 @@ module.exports = function(app, passport) {
 				console.log("Current");
 				insertCreditQuery =
 					"INSERT INTO account (id_bank, id, id_currency, number_acc, state_acc, dateExp_acc, type_acc) VALUES (?,?,?,?,?,?,?);";
-				console.log(banklist[selectedaccount[0]]);
-				console.log(req.user.id);
-				console.log(selectedaccount[1]);
-				console.log(selectedaccount[2]);
+				console.log(banklist[selectedaccount[0]]); //debug
+				console.log(req.user.id); //debug
+				console.log(selectedaccount[1]); //debug
+				console.log(selectedaccount[2]); //debug
 				connection.query(
 					insertCreditQuery,
 					[
@@ -301,8 +301,8 @@ module.exports = function(app, passport) {
 				console.log(resc.getBody("utf-8")); //debug
 				balance.push(resc.getBody("utf-8"));
 			}
-			console.log("-----------");
-			console.log(req.user);
+			console.log("-----------"); //debug
+			console.log(req.user); //debug
 			res.render("./user/dashboard/credit", {
 				//add more logic here!
 				user: req.user, // get the user out of session and pass to template
@@ -343,11 +343,11 @@ module.exports = function(app, passport) {
 					callback(null, "");
 				}
 				if (rows !== null) {
-					console.log(rows);
+					console.log(rows); //debug
 					callback(null, rows[0].id_bank);
 				} else {
 					console.log("No existe ese token"); //debug
-					console.log(rows);
+					console.log(rows); //debug
 					callback(null, null);
 				}
 			});
@@ -456,7 +456,7 @@ module.exports = function(app, passport) {
 		}
 
 		function deleteAccount(req, rows, callback) {
-			console.log("Step 2 Reset Password");
+			console.log("Step 2 Reset Password"); //debug
 			console.log(req.user.id, req.body.anumber, req.body.bank); //debug
 			console.log(rows); //debug
 			deleteQuery =
@@ -532,7 +532,7 @@ module.exports = function(app, passport) {
 				async.apply(deleteAccount, req)
 			],
 			function(err, result) {
-				console.log(result);
+				console.log(result); //debug
 				res.redirect("/users/dashboard/accounts/savings");
 			}
 		);
@@ -855,7 +855,7 @@ module.exports = function(app, passport) {
 	app.post("/users/dashboard/create_budget", isLoggedIn, function(req, res) {
 		var properties = Object.keys(req.body);
 		var values = Object.values(req.body);
-		console.log(properties);
+		console.log(properties); //debug
 
 		nameBudget = req.body.nameBudget;
 		amount = req.body.money;
@@ -913,7 +913,6 @@ module.exports = function(app, passport) {
 				}
 			);
 		});
-
 		res.redirect("/users/dashboard/accounts/budget");
 	});
 
@@ -1144,7 +1143,7 @@ module.exports = function(app, passport) {
 						}
 					);
 				} else {
-					console.log("----NotMatchPass----");
+					console.log("----NotMatchPass----"); //debug
 					//req.flash("NotMatchPass", "The current password does not match");
 				}
 			}
@@ -1171,12 +1170,6 @@ module.exports = function(app, passport) {
 	// =====================================
 	app.get("/users/dashboard/investments", isLoggedIn, function(req, res) {
 		res.send("NOT IMPLEMENTED :" + req.url);
-	});
-
-	app.get("/dummy", function(req, res) {
-		res.render("./user/terms", {
-			user: req.user // get the user out of session and pass to template
-		});
 	});
 
 	// =====================================
