@@ -33,10 +33,10 @@
                 <div class="card-body">
                     <div class="login-form">
                         <h2 class="control-label">Create a Group</h4>
-                        <form method="POST" action="">
+                        <form method="POST" action="/users/dashboard/accounts/groups">
                             <div class="form-group">
                                  <label class="control-label">Group Name</label>
-                                 <input name="name" type="text" class="form-control" placeholder="Name" required>
+                                 <input name="nameGroup" type="text" class="form-control" placeholder="Name" required>
                             </div>                           
                             <div class="form-group">
                                  <label class="control-label">Link the Accounts</label>
@@ -49,12 +49,12 @@
                                     <td class="text-center">Account Number</td>
                                     <td class="text-center">Balance</td>
                                 </tr>
-                                <% for(let i = 0; i < results.length; i++) { %>
-                                    <%if (results[i].typeAcc =="credit") { %>
-                                        <tr>
-                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
-                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
-                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <%if (data[i].type_acc === "credit") { %>
+                                    <tr>
+                                        <td>#<%=data[i].name_bank%> <%=data[i].number_acc%> <%=data[i].type_acc%></td>
+                                        <td><strong>$</strong> <%=balances[i]%></td>
+                                        <td><input style="width:100%" type="checkbox" name="accCredit<%=i%>" value="<%=data[i].number_acc%>"></td>
                                     </tr>    
                                     <% } %>
                                 <% } %>
@@ -65,12 +65,12 @@
                                     <td class="text-center">Account Number</td>
                                     <td class="text-center">Balance</td>
                                 </tr>
-                                <% for(let i = 0; i < results.length; i++) { %>
-                                    <%if (results[i].typeAcc =="saving") { %>
-                                        <tr>
-                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
-                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
-                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <%if (data[i].type_acc === "saving") { %>
+                                    <tr>
+                                        <td>#<%=data[i].name_bank%> <%=data[i].number_acc%> <%=data[i].type_acc%></td>
+                                        <td><strong>$</strong> <%=balances[i]%></td>
+                                        <td><input style="width:100%" type="checkbox" name="accSaving<%=i%>" value="<%=data[i].number_acc%>"></td>
                                     </tr>    
                                     <% } %>
                                 <% } %>
@@ -82,18 +82,18 @@
                                     <td class="text-center">Account Number</td>
                                     <td class="text-center">Balance</td>
                                 </tr>
-                                <% for(let i = 0; i < results.length; i++) { %>
-                                    <%if (results[i].typeAcc =="current") { %>
-                                        <tr>
-                                        <td>#<%=results[i].numberAcc%> <%=results[i].typeAcc%></td>
-                                        <td><strong>$</strong> <%=results[i].balanceAcc%></td>
-                                        <td><input style="width:100%" type="checkbox" name="acc<%=i%>" value="<%=results[i].bankAcc%>,<%=results[i].numberAcc%>,<%=results[i].typeAcc%>"></td>
+                                <% for(let i = 0; i < data.length; i++) { %>
+                                    <%if (data[i].type_acc === "current") { %>
+                                    <tr>
+                                        <td>#<%=data[i].name_bank%> <%=data[i].number_acc%> <%=data[i].type_acc%></td>
+                                        <td><strong>$</strong> <%=balances[i]%></td>
+                                        <td><input style="width:100%" type="checkbox" name="accCurrent<%=i%>" value="<%=data[i].number_acc%>""></td>
                                     </tr>    
                                     <% } %>
                                 <% } %>              
                                 </div>
                                  <!-- Formulario checkbox con las cuentas del usuario -->
-                                  
+                            </table>  
                             </div>
                             <button type="submit" class="btn btn-primary">Create</button>
                         </form>

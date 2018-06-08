@@ -1157,11 +1157,96 @@ module.exports = function(app, passport) {
 	// =====================================
 	// SECTION:GROUP ACCOUNTS  SEE
 	// =====================================
-
 	app.get("/users/dashboard/accounts/groups", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/group", {
-			user: req.user // get the user out of session and pass to template
+		var selectQuery =
+			"SELECT name_bank, number_acc, type_acc FROM account, bank, user WHERE account.id=? AND account.id_bank=bank.id_bank AND user.id=account.id;";
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			var urilist = [];
+			var balance = [];
+			for (let i = 0; i < rows.length; i++) {
+				var uribase =
+					"http://apibank.herokuapp.com/balance/" +
+					rows[i].number_acc;
+				urilist.push(uribase);
+			}
+			for (let i = 0; i < urilist.length; i++) {
+				var resc = requests("GET", urilist[i]);
+				//console.log(resc.getBody("utf-8"));
+				balance.push(resc.getBody("utf-8"));
+			}
+
+			res.render("./user/dashboard/group", {
+				user: req.user, // get the user out of session and pass to template
+				data: rows,
+				balances: balance
+			});
 		});
+	});
+
+
+	app.post("/users/dashboard/accounts/groups", isLoggedIn, function(req, res) {
+		var properties = Object.keys(req.body);
+		var values = Object.values(req.body);
+		console.log(properties); //debug
+
+		nameGroup = req.body.nameGroup;
+
+		var queryCount =
+			"SELECT COUNT(type_acc) AS numberAcc FROM account WHERE account.id=?;";
+		connection.query(queryCount, [req.user.id], function(err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+
+			var accountsGroup = [];
+			for (let i = 0; i < properties.length; i++) {
+				for (let j = 0; j < rows[0].numberAcc; j++) {
+					if (
+						properties[i] === "accCredit".concat(j) ||
+						properties[i] === "accCurrent".concat(j) ||
+						properties[i] === "accSaving".concat(j)
+					) {
+						accountsGroup.push(values[i]);
+					}
+				}
+			}
+
+			var insertGroup =
+				"INSERT INTO groupAcc (id_currency, name_groupAcc, id) VALUES (?, ?, ?);";
+			connection.query(
+				insertGroup,
+				[1, nameGroup, req.user.id],
+				function(err, rows) {
+					if (err) {
+						console.log("Wrong Query in Current Database");
+						throw err;
+					}
+					var insertAccBudget =
+						"INSERT INTO itemGroup (id_groupAcc, id_acc) VALUES ((SELECT id_groupAcc FROM groupAcc WHERE name_groupAcc=?),(SELECT id_acc FROM account WHERE number_acc=?));";
+					for (let i = 0; i < accountsGroup.length; i++) {
+						connection.query(
+							insertAccBudget,
+							[nameGroup, accountsGroup[i]],
+							function(err, rows) {
+								if (err) {
+									console.log(
+										"Wrong Query in Current Database"
+									);
+									throw err;
+								}
+							}
+						);
+					}
+				}
+			);
+		});
+
+		res.redirect("/users/dashboard/group_accounts");
 	});
 
 	//NO IMPLEMENTADO
@@ -1169,8 +1254,20 @@ module.exports = function(app, passport) {
 	// SECTION: GROUP ACCOUNTS
 	// =====================================
 	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
-		res.render("./user/dashboard/group_accounts", {
-			user: req.user // get the user out of session and pass to template
+		var selectQuery =
+			"SELECT name_groupAcc FROM groupAcc WHERE groupAcc.id=?;";
+		connection.query(
+			selectQuery,
+			[req.user.id],
+			function(err, rows) {
+				if (err) {
+					console.log("Wrong Query in Current Database");
+					throw err;
+				}
+				res.render("./user/dashboard/group_accounts", {
+					user: req.user,
+					data: rows // get the user out of session and pass to template
+				});
 		});
 	});
 

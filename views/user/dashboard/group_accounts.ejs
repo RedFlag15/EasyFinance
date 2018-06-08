@@ -37,7 +37,25 @@
             <div class="container-fluid">
                 <!-- Start Page Content -->
                 <div class="row">
-
+                
+                <%if (data.length > 0) { %>
+                    <% for(let i = 0; i < data.length; i++) { %>
+                        <div class="col-md-3">
+                        <a href="/users/dashboard/showgroup">
+                        <div class="card p-30">
+                            <div class="media">
+                                <div class="media-left meida media-middle">
+                                    <span><i class="fa fa-object-group f-s-40 color-primary"></i></span>
+                                </div>
+                                <div class="media-body media-text-right">
+                                    <h2><%data[i].name_groupAcc%></h2>
+                                </div>
+                            </div>
+                        </div>
+                        </a>
+                    </div>
+                    <% } %>
+                <% } else { %>
                 <!--Caja para renderizar-->
                      <div class="col-md-3">
                         <a href="/users/dashboard/showgroup">
@@ -54,6 +72,7 @@
                         </a>
                     </div>
                 <!---->
+                <% } %>
                 
                 </div>
             </div>
