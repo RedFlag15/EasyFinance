@@ -38,7 +38,7 @@
                 <!-- Start Page Content -->
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="#" onclick="document.getElementById('coin').style.display='block'">
+                        <a href="#">
                         <div class="card p-30">
                             <div class="media">
                                 <div class="media-left meida media-middle">
@@ -157,13 +157,15 @@
     <script>
     // Seed data to populate the donut pie chart
     var seedData = [
-    <% for(let i = 0; i < balances.length; i++) { %>
-    {
-        label:"<%=balancename[i]%>", 
-        value:<%= balances[i]%>, 
-        link: "/users/dashboard/"
-    },
-    <% } %>
+    
+      <% for(let i = 0; i < balances.length; i++) { %>
+      {
+          label:"<%=balancename[i]%>", 
+          value:<%= balances[i]%>, 
+          link: "/users/dashboard/"
+      },
+      <% } %>
+    
     ];
 
     // Define size & radius of donut pie chart

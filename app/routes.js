@@ -127,38 +127,52 @@ module.exports = function(app, passport) {
 				throw err;
 			}
 			console.log(rows); //debug
-			var urilist = [];
-			var balancename = [];
-			var balance = [];
-			for (let i = 0; i < rows.length; i++) {
-				var uribase =
-					"http://apibank.herokuapp.com/balance/" +
-					rows[i].number_acc;
-				urilist.push(uribase);
-				balancename.push(rows[i].number_acc);
-				console.log(uribase); //debug
-			}
 
-			for (let i = 0; i < urilist.length; i++) {
-				var resc = requests("GET", urilist[i]);
-				console.log(resc.getBody("utf-8")); //debug
-				balance.push(resc.getBody("utf-8"));
-			}
-			let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+			if (rows.length > 0) {
+				var urilist = [];
+				var balancename = [];
+				var balance = [];
+				for (let i = 0; i < rows.length; i++) {
+					var uribase =
+						"http://apibank.herokuapp.com/balance/" +
+						rows[i].number_acc;
+					urilist.push(uribase);
+					balancename.push(rows[i].number_acc);
+					console.log(uribase); //debug
+				}
 
-			console.log(balance.map(Number).reduce(getSumBalance)); //debug
-			console.log("-----------"); //debug
-			console.log(req.user); //debug
-			res.render("./user/dashboard/main", {
-				//add more logic here!
-				user: req.user, // get the user out of session and pass to template
-				balancev: formatCurrency(
-					balance.map(Number).reduce(getSumBalance),
-					opts
-				),
-				balances: balance.map(Number),
-				balancename: balancename
-			});
+				for (let i = 0; i < urilist.length; i++) {
+					var resc = requests("GET", urilist[i]);
+					console.log(resc.getBody("utf-8")); //debug
+					balance.push(resc.getBody("utf-8"));
+				}
+				let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+
+				console.log(balance.map(Number).reduce(getSumBalance)); //debug
+				console.log("-----------"); //debug
+				console.log(req.user); //debug
+				res.render("./user/dashboard/main", {
+					//add more logic here!
+					user: req.user, // get the user out of session and pass to template
+					balancev: formatCurrency(
+						balance.map(Number).reduce(getSumBalance),
+						opts
+					),
+					balances: balance.map(Number),
+					balancename: balancename
+				});
+			} else {
+				let opts = { format: "%s%v %c", code: "USD", symbol: "$" };
+				var balance = 0;
+				var balancename = [];
+				res.render("./user/dashboard/main", {
+					//add more logic here!
+					user: req.user, // get the user out of session and pass to template
+					balancev: formatCurrency(0, opts),
+					balances: [],
+					balancename: balancename
+				});
+			}
 		});
 	});
 
@@ -1187,12 +1201,14 @@ module.exports = function(app, passport) {
 		});
 	});
 
-
-	app.post("/users/dashboard/accounts/groups", isLoggedIn, function(req, res) {
+	app.post("/users/dashboard/accounts/groups", isLoggedIn, function(
+		req,
+		res
+	) {
+		console.log(req.body); //debug
 		var properties = Object.keys(req.body);
 		var values = Object.values(req.body);
 		console.log(properties); //debug
-
 		nameGroup = req.body.nameGroup;
 
 		var queryCount =
@@ -1215,35 +1231,34 @@ module.exports = function(app, passport) {
 					}
 				}
 			}
-
+			console.log(accountsGroup); //debug
 			var insertGroup =
 				"INSERT INTO groupAcc (id_currency, name_groupAcc, id) VALUES (?, ?, ?);";
-			connection.query(
-				insertGroup,
-				[1, nameGroup, req.user.id],
-				function(err, rows) {
-					if (err) {
-						console.log("Wrong Query in Current Database");
-						throw err;
-					}
-					var insertAccBudget =
-						"INSERT INTO itemGroup (id_groupAcc, id_acc) VALUES ((SELECT id_groupAcc FROM groupAcc WHERE name_groupAcc=?),(SELECT id_acc FROM account WHERE number_acc=?));";
-					for (let i = 0; i < accountsGroup.length; i++) {
-						connection.query(
-							insertAccBudget,
-							[nameGroup, accountsGroup[i]],
-							function(err, rows) {
-								if (err) {
-									console.log(
-										"Wrong Query in Current Database"
-									);
-									throw err;
-								}
-							}
-						);
-					}
+			connection.query(insertGroup, [1, nameGroup, req.user.id], function(
+				err,
+				rows
+			) {
+				if (err) {
+					console.log("Wrong Query in Current Database");
+					throw err;
 				}
-			);
+				console.log("Inserting Group"); //debug
+				console.log(rows); //debug
+				var insertAccBudget =
+					"INSERT INTO itemGroup (id_groupAcc, id_acc) VALUES ((SELECT id_groupAcc FROM groupAcc WHERE name_groupAcc=?),(SELECT id_acc FROM account WHERE number_acc=?));";
+				for (let i = 0; i < accountsGroup.length; i++) {
+					connection.query(
+						insertAccBudget,
+						[nameGroup, accountsGroup[i]],
+						function(err, rows) {
+							if (err) {
+								console.log("Wrong Query in Current Database");
+								throw err;
+							}
+						}
+					);
+				}
+			});
 		});
 
 		res.redirect("/users/dashboard/group_accounts");
@@ -1256,19 +1271,34 @@ module.exports = function(app, passport) {
 	app.get("/users/dashboard/group_accounts", isLoggedIn, function(req, res) {
 		var selectQuery =
 			"SELECT name_groupAcc FROM groupAcc WHERE groupAcc.id=?;";
-		connection.query(
-			selectQuery,
-			[req.user.id],
-			function(err, rows) {
-				if (err) {
-					console.log("Wrong Query in Current Database");
-					throw err;
-				}
-				res.render("./user/dashboard/group_accounts", {
-					user: req.user,
-					data: rows // get the user out of session and pass to template
-				});
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			console.log(rows);
+			res.render("./user/dashboard/group_accounts", {
+				user: req.user,
+				data: rows // get the user out of session and pass to template
+			});
 		});
+	});
+	app.get("/users/dashboard/showgroup/", isLoggedIn, function(req, res) {
+		console.log(req.body);
+		/*
+		var selectQuery =
+			"SELECT name_groupAcc FROM groupAcc WHERE groupAcc.id=?;";
+		connection.query(selectQuery, [req.user.id], function(err, rows) {
+			if (err) {
+				console.log("Wrong Query in Current Database");
+				throw err;
+			}
+			console.log(rows);
+			res.render("./user/dashboard/group_accounts", {
+				user: req.user,
+				data: rows // get the user out of session and pass to template
+			});
+		});*/
 	});
 
 	//NO IMPLEMENTADO
